@@ -11,6 +11,10 @@
   },
   "authors": [
     {
+      "name": "Satrio Dwi Prabowo",
+      "email": "sdp@starset.id"
+    }, 
+    {
       "name": "Adam Engebretson",
       "email": "adam@laravelcollective.com"
     },
