@@ -2,7 +2,7 @@
   "name": "prabowosd/laravel-collective-html",
   "description": "Laravel 11-13 compatible fork of LaravelCollective/html. Namespaces kept as original for compatibility. HTML and Form Builders for the Laravel Framework",
   "type": "library",
-  "version": "1.1.1",
+  "version": "13.0.0",
   "license": "MIT",
   "homepage": "https://laravelcollective.com",
   "support": {
@@ -41,9 +41,6 @@
     ]
   },
   "extra": {
-    "branch-alias": {
-      "dev-master": "6.x-dev"
-    },
     "laravel": {
       "providers": [
         "Collective\\Html\\HtmlServiceProvider"
