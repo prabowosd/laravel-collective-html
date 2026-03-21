@@ -1,39 +1,19 @@
 <?php
 
+require __DIR__ . '/../../../vendor/autoload.php';
+
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Events\Dispatcher;
-
-/*
-|--------------------------------------------------------------------------
-| Register The Composer Auto Loader
-|--------------------------------------------------------------------------
-|
-| Composer provides a convenient, automatically generated class loader
-| for our application. We just need to utilize it! We'll require it
-| into the script here so that we do not have to worry about the
-| loading of any our classes "manually". Feels great to relax.
-|
-*/
-
-require __DIR__ . '/vendor/autoload.php';
-
-/*
-|--------------------------------------------------------------------------
-| Set The Default Timezone
-|--------------------------------------------------------------------------
-|
-| Here we will set the default timezone for PHP. PHP is notoriously mean
-| if the timezone is not explicitly set. This will be used by each of
-| the PHP date and date-time functions throughout the application.
-|
-*/
+use Illuminate\Container\Container;
+use Mockery as m;
 
 date_default_timezone_set('UTC');
 
-/*
- * Prepare the db connection (spoofing that shit)
- */
+$container = new Container;
+$container->instance('Illuminate\Contracts\Http\Kernel', m::mock('Illuminate\Contracts\Http\Kernel')->shouldReceive('hasMiddleware')->andReturn(false)->getMock());
+Container::setInstance($container);
+
 $capsule = new Capsule;
 $capsule->addConnection([
   'driver'   => 'sqlite',
@@ -51,3 +31,9 @@ $capsule->schema()->create('models', function (Blueprint $table) {
     $table->string('email');
     $table->timestamps();
 });
+
+if (!function_exists('app')) {
+    function app($abstract = null) {
+        return Container::getInstance()->make($abstract);
+    }
+}

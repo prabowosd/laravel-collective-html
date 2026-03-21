@@ -17,7 +17,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
     {
         $this->urlGenerator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
         $this->viewFactory = m::mock(Factory::class);
-        $this->htmlBuilder = new HtmlBuilder($this->urlGenerator, $this->viewFactory);
+        $this->htmlBuilder = new HtmlBuilder($this->viewFactory, $this->urlGenerator);
     }
 
     protected function tearDown(): void
@@ -127,7 +127,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
 
     public function testMailto()
     {
-        $htmlBuilder = m::mock('Collective\Html\HtmlBuilder[obfuscate,email]', [$this->urlGenerator, $this->viewFactory]);
+        $htmlBuilder = m::mock('Collective\Html\HtmlBuilder[obfuscate,email]', [$this->viewFactory, $this->urlGenerator]);
         $htmlBuilder->shouldReceive('obfuscate', 'email')->andReturnUsing(function () {
             $args = func_get_args();
             return $args[0];

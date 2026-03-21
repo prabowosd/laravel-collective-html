@@ -1,7 +1,64 @@
-# LaravelCollective HTML
+# Laravel Collective HTML
 
-Fork of [https://github.com/LaravelCollective/html](https://github.com/LaravelCollective/html) with support for **Laravel 11**.
+[![Latest Stable Version](https://poser.pugx.org/prabowosd/laravel-collective-html/v/stable)](https://packagist.org/packages/prabowosd/laravel-collective-html)
+[![Total Downloads](https://poser.pugx.org/prabowosd/laravel-collective-html/downloads)](https://packagist.org/packages/prabowosd/laravel-collective-html)
+[![License](https://poser.pugx.org/prabowosd/laravel-collective-html/license)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 
-## Howto
+This is a fork of the original [LaravelCollective/html](https://github.com/LaravelCollective/html) package, updated to support **Laravel 11, 12, and 13** and **PHP 8.2+ (including PHP 8.4)**.
 
-Please refer to the original documentation at [https://laravelcollective.com/docs/6.x/html](https://laravelcollective.com/docs/6.x/html).
+The namespaces have been kept as `Collective\Html` to maintain compatibility with existing projects that use the original package.
+
+## Installation
+
+You can install this package via composer:
+
+```bash
+composer require prabowosd/laravel-collective-html
+```
+
+## Documentation
+
+For full documentation, please refer to the original Laravel Collective website:
+[https://laravelcollective.com/docs/6.x/html](https://laravelcollective.com/docs/6.x/html)
+
+## Quick Start
+
+### Form Open
+```php
+{!! Form::open(['url' => 'foo/bar']) !!}
+    //
+{!! Form::close() !!}
+```
+
+### Label
+```php
+{!! Form::label('email', 'E-Mail Address') !!}
+```
+
+### Text, Text Area, Password & Hidden Fields
+```php
+{!! Form::text('username') !!}
+{!! Form::textarea('description') !!}
+{!! Form::password('password') !!}
+{!! Form::hidden('invisible', 'secret') !!}
+```
+
+### Checkboxes and Radio Buttons
+```php
+{!! Form::checkbox('name', 'value') !!}
+{!! Form::radio('name', 'value') !!}
+```
+
+### Drop-Down Lists
+```php
+{!! Form::select('size', ['L' => 'Large', 'S' => 'Small']) !!}
+```
+
+### Buttons
+```php
+{!! Form::submit('Click Me!') !!}
+```
+
+## License
+
+The Laravel Collective HTML package is open-sourced software licensed under the [MIT license](LICENSE.txt).

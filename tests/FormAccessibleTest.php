@@ -35,7 +35,7 @@ class FormAccessibleTest extends PHPUnit\Framework\TestCase
 
         $this->urlGenerator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
         $this->viewFactory = m::mock(Factory::class);
-        $this->htmlBuilder = new HtmlBuilder($this->urlGenerator, $this->viewFactory);
+        $this->htmlBuilder = new HtmlBuilder($this->viewFactory, $this->urlGenerator);
         $this->formBuilder = new FormBuilder($this->htmlBuilder, $this->urlGenerator, $this->viewFactory, 'abc');
     }
 

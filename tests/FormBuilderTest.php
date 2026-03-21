@@ -12,6 +12,17 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Session\Store;
 use Mockery as m;
 
+if (!function_exists('app')) {
+    function app($abstract = null) {
+        if ($abstract === 'Illuminate\Contracts\Http\Kernel') {
+            $kernel = m::mock('Illuminate\Contracts\Http\Kernel');
+            $kernel->shouldReceive('hasMiddleware')->andReturn(false);
+            return $kernel;
+        }
+        return null;
+    }
+}
+
 class FormBuilderTest extends PHPUnit\Framework\TestCase
 {
     /**
@@ -26,7 +37,7 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
     {
         $this->urlGenerator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
         $this->viewFactory = m::mock(Factory::class);
-        $this->htmlBuilder = new HtmlBuilder($this->urlGenerator, $this->viewFactory);
+        $this->htmlBuilder = new HtmlBuilder($this->viewFactory, $this->urlGenerator);
 
         // prepare request for test with some data
         $request = Request::create('/foo', 'GET', [
@@ -540,7 +551,7 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
 
         $select = $this->formBuilder->select('avc', [1 => 'Yes', 0 => 'No'], true, ['placeholder' => 'Select']);
         $this->assertEquals(
-            '<select name="avc"><option value="">Select</option><option value="1" selected>Yes</option><option value="0" >No</option></select>',
+            '<select name="avc"><option value="" hidden="true">Select</option><option value="1" selected>Yes</option><option value="0" >No</option></select>',
             $select
         );
     }
@@ -641,7 +652,7 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
           ['placeholder' => 'Select One...']
         );
         $this->assertEquals($select,
-          '<select name="size"><option selected="selected" value="">Select One...</option><option value="L">Large</option><option value="S">Small</option></select>');
+          '<select name="size"><option selected="selected" value="" hidden="true">Select One...</option><option value="L">Large</option><option value="S">Small</option></select>');
 
         $select = $this->formBuilder->select(
           'size',
@@ -650,7 +661,7 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
           ['placeholder' => 'Select One...']
         );
         $this->assertEquals($select,
-          '<select name="size"><option value="">Select One...</option><option value="L" selected="selected">Large</option><option value="S">Small</option></select>');
+          '<select name="size"><option value="" hidden="true">Select One...</option><option value="L" selected="selected">Large</option><option value="S">Small</option></select>');
 
         $select = $this->formBuilder->select(
             'encoded_html',
@@ -659,7 +670,7 @@ class FormBuilderTest extends PHPUnit\Framework\TestCase
             ['placeholder' => 'Select the &nbsp;']
         );
         $this->assertEquals($select,
-            '<select name="encoded_html"><option selected="selected" value="">Select the &nbsp;</option><option value="no_break_space">&nbsp;</option><option value="ampersand">&amp;</option><option value="lower_than">&lt;</option></select>'
+            '<select name="encoded_html"><option selected="selected" value="" hidden="true">Select the &nbsp;</option><option value="no_break_space">&nbsp;</option><option value="ampersand">&amp;</option><option value="lower_than">&lt;</option></select>'
         );
     }
 

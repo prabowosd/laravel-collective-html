@@ -41,7 +41,7 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
     protected function registerHtmlBuilder()
     {
         $this->app->singleton('html', function ($app) {
-            return new HtmlBuilder($app['url'], $app['view']);
+            return new HtmlBuilder($app['view'], $app['url']);
         });
     }
 
