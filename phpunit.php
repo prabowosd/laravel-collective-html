@@ -1,6 +1,17 @@
 <?php
 
-require __DIR__ . '/../../../vendor/autoload.php';
+$autoloaders = [
+    __DIR__ . '/vendor/autoload.php',          // standalone checkout
+    __DIR__ . '/../../../vendor/autoload.php',  // installed inside a host project's vendor/
+];
+
+foreach ($autoloaders as $autoloader) {
+    if (file_exists($autoloader)) {
+        require $autoloader;
+
+        break;
+    }
+}
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Database\Schema\Blueprint;

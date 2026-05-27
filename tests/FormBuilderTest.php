@@ -25,6 +25,12 @@ if (!function_exists('app')) {
 
 class FormBuilderTest extends PHPUnit\Framework\TestCase
 {
+    protected $urlGenerator;
+
+    protected $viewFactory;
+
+    protected $htmlBuilder;
+
     /**
      * @var FormBuilder
      */
