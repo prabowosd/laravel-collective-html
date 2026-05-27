@@ -1,26 +1,17 @@
 {
   "name": "prabowosd/laravel-collective-html",
-  "description": "Laravel 11-13 compatible fork of LaravelCollective/html. Namespaces kept as original for compatibility. HTML and Form Builders for the Laravel Framework",
+  "description": "HTML and Form Builders for the Laravel Framework (Laravel 10-13 compatible).",
   "type": "library",
-  "version": "13.0.1",
   "license": "MIT",
-  "homepage": "https://laravelcollective.com",
+  "homepage": "https://github.com/prabowosd/laravel-collective-html",
   "support": {
-    "issues": "https://github.com/LaravelCollective/html/issues",
-    "source": "https://github.com/LaravelCollective/html"
+    "issues": "https://github.com/prabowosd/laravel-collective-html/issues",
+    "source": "https://github.com/prabowosd/laravel-collective-html"
   },
   "authors": [
     {
       "name": "Satrio Dwi Prabowo",
       "email": "sdp@starset.id"
-    }, 
-    {
-      "name": "Adam Engebretson",
-      "email": "adam@laravelcollective.com"
-    },
-    {
-      "name": "Taylor Otwell",
-      "email": "taylorotwell@gmail.com"
     }
   ],
   "require": {
@@ -45,6 +36,9 @@
     ]
   },
   "extra": {
+    "branch-alias": {
+      "dev-main": "1.1.x-dev"
+    },
     "laravel": {
       "providers": [
         "Collective\\Html\\HtmlServiceProvider"

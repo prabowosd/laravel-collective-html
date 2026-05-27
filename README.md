@@ -4,9 +4,9 @@
 [![Total Downloads](https://poser.pugx.org/prabowosd/laravel-collective-html/downloads)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 [![License](https://poser.pugx.org/prabowosd/laravel-collective-html/license)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 
-This is a fork of the original [LaravelCollective/html](https://github.com/LaravelCollective/html) package, updated to support **Laravel 11, 12, and 13** and **PHP 8.2+ (including PHP 8.4)**.
+HTML and Form Builders for the Laravel Framework, maintained for **Laravel 10, 11, 12, and 13** and **PHP 8.2+ (including PHP 8.4)**.
 
-The namespaces have been kept as `Collective\Html` to maintain compatibility with existing projects that use the original package.
+The `Collective\Html` namespace is retained so the package stays a drop-in replacement for projects already using the classic HTML/Form builders.
 
 ## Installation
 
@@ -18,8 +18,7 @@ composer require prabowosd/laravel-collective-html
 
 ## Documentation
 
-For full documentation, please refer to the original Laravel Collective website:
-[https://laravelcollective.com/docs/6.x/html](https://laravelcollective.com/docs/6.x/html)
+The API mirrors the classic Laravel HTML/Form builders — `Form::` and `Html::` facades behave as documented in the long-standing HTML builder docs.
 
 ## Quick Start
 
