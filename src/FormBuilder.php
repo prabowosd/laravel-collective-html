@@ -1407,7 +1407,7 @@ class FormBuilder
      * Resolve a configured CSS class, falling back to the given default when
      * no config repository is bound (e.g. outside a full application).
      */
-    protected function cssClass(string $key, string $default): string
+    public function cssClass(string $key, string $default = ''): string
     {
         $container = Container::getInstance();
 

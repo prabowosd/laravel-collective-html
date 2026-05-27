@@ -2,12 +2,14 @@
 
 namespace Collective\Html;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
+use Collective\Html\Components\FormCheckbox;
+use Collective\Html\Components\FormInput;
+use Collective\Html\Components\FormSelect;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
 
-class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
+class HtmlServiceProvider extends ServiceProvider
 {
     /**
      * Supported Blade Directives
@@ -24,20 +26,28 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/html.php', 'html');
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/html.php' => $this->app->configPath('html.php'),
-            ], 'html-config');
-        }
-
         $this->registerHtmlBuilder();
 
         $this->registerFormBuilder();
 
         $this->app->alias('html', HtmlBuilder::class);
         $this->app->alias('form', FormBuilder::class);
+    }
+
+    /**
+     * Bootstrap package services.
+     */
+    public function boot(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/html.php' => $this->app->configPath('html.php'),
+            ], 'html-config');
+        }
 
         $this->registerBladeDirectives();
+
+        $this->registerBladeComponents();
     }
 
     /**
@@ -89,10 +99,14 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
     }
 
     /**
-     * Get the services provided by the provider.
+     * Register the package's Blade components.
      */
-    public function provides(): array
+    protected function registerBladeComponents(): void
     {
-        return ['html', 'form', HtmlBuilder::class, FormBuilder::class];
+        $this->callAfterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+            $bladeCompiler->component(FormInput::class, 'form-input');
+            $bladeCompiler->component(FormSelect::class, 'form-select');
+            $bladeCompiler->component(FormCheckbox::class, 'form-checkbox');
+        });
     }
 }

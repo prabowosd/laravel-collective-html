@@ -15,8 +15,13 @@ return [
 
     'classes' => [
         'control' => 'form-control',
+        'select' => 'form-select',
+        'label' => 'form-label',
         'invalid' => 'is-invalid',
         'feedback' => 'invalid-feedback',
+        'check_wrapper' => 'form-check',
+        'check_input' => 'form-check-input',
+        'check_label' => 'form-check-label',
     ],
 
 ];
