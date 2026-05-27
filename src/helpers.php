@@ -1,15 +1,17 @@
 <?php
+
+use Illuminate\Support\HtmlString;
+
 if (! function_exists('link_to')) {
     /**
      * Generate a HTML link.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $secure
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @param  bool  $escape
+     * @return HtmlString
      */
     function link_to($url, $title = null, $attributes = [], $secure = null, $escape = true)
     {
@@ -21,12 +23,11 @@ if (! function_exists('link_to_asset')) {
     /**
      * Generate a HTML link to an asset.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $secure
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @return HtmlString
      */
     function link_to_asset($url, $title = null, $attributes = [], $secure = null)
     {
@@ -38,12 +39,11 @@ if (! function_exists('link_to_route')) {
     /**
      * Generate a HTML link to a named route.
      *
-     * @param string $name
-     * @param string $title
-     * @param array  $parameters
-     * @param array  $attributes
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $name
+     * @param  string  $title
+     * @param  array  $parameters
+     * @param  array  $attributes
+     * @return HtmlString
      */
     function link_to_route($name, $title = null, $parameters = [], $attributes = [])
     {
@@ -55,12 +55,11 @@ if (! function_exists('link_to_action')) {
     /**
      * Generate a HTML link to a controller action.
      *
-     * @param string $action
-     * @param string $title
-     * @param array  $parameters
-     * @param array  $attributes
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $action
+     * @param  string  $title
+     * @param  array  $parameters
+     * @param  array  $attributes
+     * @return HtmlString
      */
     function link_to_action($action, $title = null, $parameters = [], $attributes = [])
     {

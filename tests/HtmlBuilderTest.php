@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Contracts\View\Factory;
 use Collective\Html\HtmlBuilder;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
 
-class HtmlBuilderTest extends PHPUnit\Framework\TestCase
+class HtmlBuilderTest extends TestCase
 {
     protected $urlGenerator;
 
@@ -20,7 +21,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
      */
     protected function setUp(): void
     {
-        $this->urlGenerator = new UrlGenerator(new RouteCollection(), Request::create('/foo', 'GET'));
+        $this->urlGenerator = new UrlGenerator(new RouteCollection, Request::create('/foo', 'GET'));
         $this->viewFactory = m::mock(Factory::class);
         $this->htmlBuilder = new HtmlBuilder($this->viewFactory, $this->urlGenerator);
     }
@@ -30,11 +31,11 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         m::close();
     }
 
-    public function testDl()
+    public function test_dl()
     {
         $list = [
-          'foo'  => 'bar',
-          'bing' => 'baz',
+            'foo' => 'bar',
+            'bing' => 'baz',
         ];
 
         $attributes = ['class' => 'example'];
@@ -44,7 +45,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('<dl class="example"><dt>foo</dt><dd>bar</dd><dt>bing</dt><dd>baz</dd></dl>', $result);
     }
 
-    public function testOl()
+    public function test_ol()
     {
         $list = ['foo', 'bar', '&amp;'];
 
@@ -55,7 +56,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('<ol class="example"><li>foo</li><li>bar</li><li>&amp;</li></ol>', $ol);
     }
 
-    public function testUl()
+    public function test_ul()
     {
         $list = ['foo', 'bar', '&amp;'];
 
@@ -66,14 +67,14 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('<ul class="example"><li>foo</li><li>bar</li><li>&amp;</li></ul>', $ul);
     }
 
-    public function testMeta()
+    public function test_meta()
     {
         $result = $this->htmlBuilder->meta('description', 'Lorem ipsum dolor sit amet.');
 
         $this->assertEquals('<meta name="description" content="Lorem ipsum dolor sit amet.">', $result);
     }
 
-    public function testTag()
+    public function test_tag()
     {
         $result1 = $this->htmlBuilder->tag('p', 'Lorem ipsum dolor sit amet.');
 
@@ -94,59 +95,60 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('<div class="row"><img src="http://example.com/image1"><img src="http://example.com/image2"></div>', $result4);
     }
 
-    public function testMetaOpenGraph()
+    public function test_meta_open_graph()
     {
         $result = $this->htmlBuilder->meta(null, 'website', ['property' => 'og:type']);
 
         $this->assertEquals('<meta content="website" property="og:type">', $result);
     }
 
-    public function testFavicon()
+    public function test_favicon()
     {
         $this->urlGenerator->forceRootUrl('http://foo.com');
         $target = $this->urlGenerator->to('bar.ico');
         $result = $this->htmlBuilder->favicon('http://foo.com/bar.ico');
 
-        $this->assertEquals('<link rel="shortcut icon" type="image/x-icon" href="' . $target . '">', $result);
+        $this->assertEquals('<link rel="shortcut icon" type="image/x-icon" href="'.$target.'">', $result);
     }
 
-    public function testComponentRegistration()
+    public function test_component_registration()
     {
         $this->htmlBuilder->component('tweet', 'components.tweet', ['handle', 'body', 'date']);
 
         $this->assertTrue($this->htmlBuilder->hasComponent('tweet'));
     }
 
-    public function testLink()
+    public function test_link()
     {
-        $result1 = $this->htmlBuilder->link("http://www.example.com", "<span>Example.com</span>", ["class" => "example-link"], null, true);
+        $result1 = $this->htmlBuilder->link('http://www.example.com', '<span>Example.com</span>', ['class' => 'example-link'], null, true);
 
-        $result2 = $this->htmlBuilder->link("http://www.example.com", "<span>Example.com</span>", ["class" => "example-link"], null, false);
+        $result2 = $this->htmlBuilder->link('http://www.example.com', '<span>Example.com</span>', ['class' => 'example-link'], null, false);
 
-        $result3 = $this->htmlBuilder->link("https://a.com/b?id=4&not_id=5", "URL which needs escaping");
+        $result3 = $this->htmlBuilder->link('https://a.com/b?id=4&not_id=5', 'URL which needs escaping');
 
         $this->assertEquals('<a href="http://www.example.com" class="example-link">&lt;span&gt;Example.com&lt;/span&gt;</a>', $result1);
         $this->assertEquals('<a href="http://www.example.com" class="example-link"><span>Example.com</span></a>', $result2);
         $this->assertEquals('<a href="https://a.com/b?id=4&amp;not_id=5">URL which needs escaping</a>', $result3);
     }
 
-    public function testMailto()
+    public function test_mailto()
     {
         $htmlBuilder = m::mock('Collective\Html\HtmlBuilder[obfuscate,email]', [$this->viewFactory, $this->urlGenerator]);
         $htmlBuilder->shouldReceive('obfuscate', 'email')->andReturnUsing(function () {
             $args = func_get_args();
+
             return $args[0];
         });
 
-        $result1 = $htmlBuilder->mailto("person@example.com", "<span>First Name Last</span>", ["class" => "example-link"], true);
+        $result1 = $htmlBuilder->mailto('person@example.com', '<span>First Name Last</span>', ['class' => 'example-link'], true);
 
-        $result2 = $htmlBuilder->mailto("person@example.com", "<span>First Name Last</span>", ["class" => "example-link"], false);
+        $result2 = $htmlBuilder->mailto('person@example.com', '<span>First Name Last</span>', ['class' => 'example-link'], false);
 
         $this->assertEquals('<a href="mailto:person@example.com" class="example-link">&lt;span&gt;First Name Last&lt;/span&gt;</a>', $result1);
         $this->assertEquals('<a href="mailto:person@example.com" class="example-link"><span>First Name Last</span></a>', $result2);
     }
 
-    public function testBooleanAttributes()
+    public function test_boolean_attributes()
     {
         $result1 = $this->htmlBuilder->attributes(['my-property' => true]);
 
@@ -157,7 +159,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('', trim($result2));
     }
 
-    public function testArrayClassAttributes()
+    public function test_array_class_attributes()
     {
         $result = $this->htmlBuilder->attributes(['class' => ['class-a', 'class-b']]);
 
@@ -165,7 +167,7 @@ class HtmlBuilderTest extends PHPUnit\Framework\TestCase
 
         $result = $this->htmlBuilder->attributes(['class' => [
             'class-a',
-            false ? 'class-b' : 'class-c'
+            false ? 'class-b' : 'class-c',
         ]]);
 
         $this->assertEquals('class="class-a class-c"', trim($result));

@@ -1,9 +1,10 @@
 <?php
+
 namespace Collective\Html\Eloquent;
 
+use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionMethod;
-use Illuminate\Support\Str;
 
 trait FormAccessible
 {
@@ -15,8 +16,7 @@ trait FormAccessible
     protected $reflection;
 
     /**
-     * @param string $key
-     *
+     * @param  string  $key
      * @return mixed
      */
     public function getFormValue($key)
@@ -51,7 +51,7 @@ trait FormAccessible
                 return $relatedModel->getFormValue($key);
             }
 
-            return data_get($relatedModel, empty($key)? null: $key);
+            return data_get($relatedModel, empty($key) ? null : $key);
         }
 
         // No form mutator, let the model resolve this
@@ -62,7 +62,6 @@ trait FormAccessible
      * Check for a nested model.
      *
      * @param  string  $key
-     *
      * @return bool
      */
     public function isNestedModel($key)
@@ -71,8 +70,6 @@ trait FormAccessible
     }
 
     /**
-     * @param $key
-     *
      * @return bool
      */
     public function hasFormMutator($key)
@@ -80,26 +77,24 @@ trait FormAccessible
         $methods = $this->getReflection()->getMethods(ReflectionMethod::IS_PUBLIC);
 
         $mutator = collect($methods)
-          ->first(function (ReflectionMethod $method) use ($key) {
-              return $method->getName() === 'form' . Str::studly($key) . 'Attribute';
-          });
+            ->first(function (ReflectionMethod $method) use ($key) {
+                return $method->getName() === 'form'.Str::studly($key).'Attribute';
+            });
 
         return (bool) $mutator;
     }
 
     /**
-     * @param $key
-     * @param $value
-     *
      * @return mixed
      */
     private function mutateFormAttribute($key, $value)
     {
-        return $this->{'form' . Str::studly($key) . 'Attribute'}($value);
+        return $this->{'form'.Str::studly($key).'Attribute'}($value);
     }
 
     /**
      * Get a ReflectionClass Instance
+     *
      * @return ReflectionClass
      */
     protected function getReflection()

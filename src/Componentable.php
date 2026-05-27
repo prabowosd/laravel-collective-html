@@ -1,7 +1,9 @@
 <?php
+
 namespace Collective\Html;
 
 use BadMethodCallException;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
@@ -17,9 +19,6 @@ trait Componentable
     /**
      * Register a custom component.
      *
-     * @param       $name
-     * @param       $view
-     * @param array $signature
      *
      * @return void
      */
@@ -31,7 +30,6 @@ trait Componentable
     /**
      * Check if a component is registered.
      *
-     * @param $name
      *
      * @return bool
      */
@@ -43,8 +41,6 @@ trait Componentable
     /**
      * Render a custom component.
      *
-     * @param        $name
-     * @param  array $arguments
      *
      * @return HtmlString
      */
@@ -61,8 +57,6 @@ trait Componentable
     /**
      * Prepare the component data, while respecting provided defaults.
      *
-     * @param  array $signature
-     * @param  array $arguments
      *
      * @return array
      */
@@ -91,12 +85,11 @@ trait Componentable
     /**
      * Dynamically handle calls to the class.
      *
-     * @param  string $method
+     * @param  string  $method
      * @param  array  $parameters
+     * @return View|mixed
      *
-     * @return \Illuminate\Contracts\View\View|mixed
-     *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {

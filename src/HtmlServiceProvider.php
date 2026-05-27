@@ -1,4 +1,5 @@
 <?php
+
 namespace Collective\Html;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -13,15 +14,13 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      *
      * @var array
      */
-    protected $directives = ['entities','decode','script','style','image','favicon','link','secureLink','linkAsset','linkSecureAsset','linkRoute','linkAction','mailto','email','ol','ul','dl','meta','tag','open','model','close','token','label','input','text','password','hidden','email','tel','number','date','datetime','datetimeLocal','time','url','file','textarea','select','selectRange','selectYear','selectMonth','getSelectOption','checkbox','radio','reset','image','color','submit','button','old'
+    protected $directives = ['entities', 'decode', 'script', 'style', 'image', 'favicon', 'link', 'secureLink', 'linkAsset', 'linkSecureAsset', 'linkRoute', 'linkAction', 'mailto', 'email', 'ol', 'ul', 'dl', 'meta', 'tag', 'open', 'model', 'close', 'token', 'label', 'input', 'text', 'password', 'hidden', 'email', 'tel', 'number', 'date', 'datetime', 'datetimeLocal', 'time', 'url', 'file', 'textarea', 'select', 'selectRange', 'selectYear', 'selectMonth', 'getSelectOption', 'checkbox', 'radio', 'reset', 'image', 'color', 'submit', 'button', 'old',
     ];
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerHtmlBuilder();
 
@@ -35,10 +34,8 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Register the HTML builder instance.
-     *
-     * @return void
      */
-    protected function registerHtmlBuilder()
+    protected function registerHtmlBuilder(): void
     {
         $this->app->singleton('html', function ($app) {
             return new HtmlBuilder($app['view'], $app['url']);
@@ -47,10 +44,8 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Register the form builder instance.
-     *
-     * @return void
      */
-    protected function registerFormBuilder()
+    protected function registerFormBuilder(): void
     {
         $this->app->singleton('form', function ($app) {
             $form = new FormBuilder($app['html'], $app['url'], $app['view'], $app['session.store']->token(), $app['request']);
@@ -61,10 +56,8 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Register Blade directives.
-     *
-     * @return void
      */
-    protected function registerBladeDirectives()
+    protected function registerBladeDirectives(): void
     {
         $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
             $namespaces = [
@@ -89,10 +82,8 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
 
     /**
      * Get the services provided by the provider.
-     *
-     * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['html', 'form', HtmlBuilder::class, FormBuilder::class];
     }

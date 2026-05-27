@@ -1,50 +1,33 @@
 <?php
+
 namespace Collective\Html;
 
 use BadMethodCallException;
-use Illuminate\Support\HtmlString;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Traits\Macroable;
 
 class HtmlBuilder
 {
-    use Macroable, Componentable {
+    use Componentable, Macroable {
         Macroable::__call as macroCall;
         Componentable::__call as componentCall;
     }
 
     /**
-     * The URL generator instance.
-     *
-     * @var \Illuminate\Contracts\Routing\UrlGenerator
-     */
-    protected $url;
-
-    /**
-     * The View Factory instance.
-     *
-     * @var \Illuminate\Contracts\View\Factory
-     */
-    protected $view;
-
-    /**
      * Create a new HTML builder instance.
-     *
-     * @param \Illuminate\Contracts\Routing\UrlGenerator $url
-     * @param \Illuminate\Contracts\View\Factory         $view
      */
-    public function __construct(Factory $view, ?UrlGenerator $url = null)
-    {
-        $this->url = $url;
-        $this->view = $view;
-    }
+    public function __construct(
+        protected Factory $view,
+        protected ?UrlGenerator $url = null,
+    ) {}
 
     /**
      * Convert an HTML string to entities.
      *
-     * @param string $value
-     *
+     * @param  string  $value
      * @return string
      */
     public function entities($value)
@@ -55,8 +38,7 @@ class HtmlBuilder
     /**
      * Convert entities to HTML characters.
      *
-     * @param string $value
-     *
+     * @param  string  $value
      * @return string
      */
     public function decode($value)
@@ -67,27 +49,25 @@ class HtmlBuilder
     /**
      * Generate a link to a JavaScript file.
      *
-     * @param string $url
-     * @param array  $attributes
-     * @param bool   $secure
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @return HtmlString
      */
     public function script($url, $attributes = [], $secure = null)
     {
         $attributes['src'] = $this->url->asset($url, $secure);
 
-        return $this->toHtmlString('<script' . $this->attributes($attributes) . '></script>');
+        return $this->toHtmlString('<script'.$this->attributes($attributes).'></script>');
     }
 
     /**
      * Generate a link to a CSS file.
      *
-     * @param string $url
-     * @param array  $attributes
-     * @param bool   $secure
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @return HtmlString
      */
     public function style($url, $attributes = [], $secure = null)
     {
@@ -97,37 +77,35 @@ class HtmlBuilder
 
         $attributes['href'] = $this->url->asset($url, $secure);
 
-        return $this->toHtmlString('<link' . $this->attributes($attributes) . '>');
+        return $this->toHtmlString('<link'.$this->attributes($attributes).'>');
     }
 
     /**
      * Generate an HTML image element.
      *
-     * @param string $url
-     * @param string $alt
-     * @param array  $attributes
-     * @param bool   $secure
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $alt
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @return HtmlString
      */
     public function image($url, $alt = null, $attributes = [], $secure = null)
     {
         $attributes['alt'] = $alt;
 
-        return $this->toHtmlString('<img src="' . $this->url->asset(
+        return $this->toHtmlString('<img src="'.$this->url->asset(
             $url,
             $secure
-        ) . '"' . $this->attributes($attributes) . '>');
+        ).'"'.$this->attributes($attributes).'>');
     }
 
     /**
      * Generate a link to a Favicon file.
      *
-     * @param string $url
-     * @param array  $attributes
-     * @param bool   $secure
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @return HtmlString
      */
     public function favicon($url, $attributes = [], $secure = null)
     {
@@ -137,19 +115,18 @@ class HtmlBuilder
 
         $attributes['href'] = $this->url->asset($url, $secure);
 
-        return $this->toHtmlString('<link' . $this->attributes($attributes) . '>');
+        return $this->toHtmlString('<link'.$this->attributes($attributes).'>');
     }
 
     /**
      * Generate a HTML link.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $secure
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function link($url, $title = null, $attributes = [], $secure = null, $escape = true)
     {
@@ -163,18 +140,17 @@ class HtmlBuilder
             $title = $this->entities($title);
         }
 
-        return $this->toHtmlString('<a href="' . $this->entities($url) . '"' . $this->attributes($attributes) . '>' . $title . '</a>');
+        return $this->toHtmlString('<a href="'.$this->entities($url).'"'.$this->attributes($attributes).'>'.$title.'</a>');
     }
 
     /**
      * Generate a HTTPS HTML link.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function secureLink($url, $title = null, $attributes = [], $escape = true)
     {
@@ -184,13 +160,12 @@ class HtmlBuilder
     /**
      * Generate a HTML link to an asset.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $secure
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function linkAsset($url, $title = null, $attributes = [], $secure = null, $escape = true)
     {
@@ -202,12 +177,11 @@ class HtmlBuilder
     /**
      * Generate a HTTPS HTML link to an asset.
      *
-     * @param string $url
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $url
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function linkSecureAsset($url, $title = null, $attributes = [], $escape = true)
     {
@@ -217,14 +191,13 @@ class HtmlBuilder
     /**
      * Generate a HTML link to a named route.
      *
-     * @param string $name
-     * @param string $title
-     * @param array  $parameters
-     * @param array  $attributes
-     * @param bool   $secure
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $name
+     * @param  string  $title
+     * @param  array  $parameters
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function linkRoute($name, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true)
     {
@@ -234,14 +207,13 @@ class HtmlBuilder
     /**
      * Generate a HTML link to a controller action.
      *
-     * @param string $action
-     * @param string $title
-     * @param array  $parameters
-     * @param array  $attributes
-     * @param bool   $secure
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $action
+     * @param  string  $title
+     * @param  array  $parameters
+     * @param  array  $attributes
+     * @param  bool  $secure
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function linkAction($action, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true)
     {
@@ -251,12 +223,11 @@ class HtmlBuilder
     /**
      * Generate a HTML link to an email address.
      *
-     * @param string $email
-     * @param string $title
-     * @param array  $attributes
-     * @param bool   $escape
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $email
+     * @param  string  $title
+     * @param  array  $attributes
+     * @param  bool  $escape
+     * @return HtmlString
      */
     public function mailto($email, $title = null, $attributes = [], $escape = true)
     {
@@ -268,16 +239,15 @@ class HtmlBuilder
             $title = $this->entities($title);
         }
 
-        $email = $this->obfuscate('mailto:') . $email;
+        $email = $this->obfuscate('mailto:').$email;
 
-        return $this->toHtmlString('<a href="' . $email . '"' . $this->attributes($attributes) . '>' . $title . '</a>');
+        return $this->toHtmlString('<a href="'.$email.'"'.$this->attributes($attributes).'>'.$title.'</a>');
     }
 
     /**
      * Obfuscate an e-mail address to prevent spam-bots from sniffing it.
      *
-     * @param string $email
-     *
+     * @param  string  $email
      * @return string
      */
     public function email($email)
@@ -288,8 +258,7 @@ class HtmlBuilder
     /**
      * Generates non-breaking space entities based on number supplied.
      *
-     * @param int $num
-     *
+     * @param  int  $num
      * @return string
      */
     public function nbsp($num = 1)
@@ -300,10 +269,9 @@ class HtmlBuilder
     /**
      * Generate an ordered list of items.
      *
-     * @param array $list
-     * @param array $attributes
-     *
-     * @return \Illuminate\Support\HtmlString|string
+     * @param  array  $list
+     * @param  array  $attributes
+     * @return HtmlString|string
      */
     public function ol($list, $attributes = [])
     {
@@ -313,10 +281,9 @@ class HtmlBuilder
     /**
      * Generate an un-ordered list of items.
      *
-     * @param array $list
-     * @param array $attributes
-     *
-     * @return \Illuminate\Support\HtmlString|string
+     * @param  array  $list
+     * @param  array  $attributes
+     * @return HtmlString|string
      */
     public function ul($list, $attributes = [])
     {
@@ -326,10 +293,8 @@ class HtmlBuilder
     /**
      * Generate a description list of items.
      *
-     * @param array $list
-     * @param array $attributes
      *
-     * @return \Illuminate\Support\HtmlString
+     * @return HtmlString
      */
     public function dl(array $list, array $attributes = [])
     {
@@ -355,11 +320,10 @@ class HtmlBuilder
     /**
      * Create a listing HTML element.
      *
-     * @param string $type
-     * @param array  $list
-     * @param array  $attributes
-     *
-     * @return \Illuminate\Support\HtmlString|string
+     * @param  string  $type
+     * @param  array  $list
+     * @param  array  $attributes
+     * @return HtmlString|string
      */
     protected function listing($type, $list, $attributes = [])
     {
@@ -384,10 +348,9 @@ class HtmlBuilder
     /**
      * Create the HTML for a listing element.
      *
-     * @param mixed  $key
-     * @param string $type
-     * @param mixed  $value
-     *
+     * @param  mixed  $key
+     * @param  string  $type
+     * @param  mixed  $value
      * @return string
      */
     protected function listingElement($key, $type, $value)
@@ -395,17 +358,16 @@ class HtmlBuilder
         if (is_array($value)) {
             return $this->nestedListing($key, $type, $value);
         } else {
-            return '<li>' . e($value, false) . '</li>';
+            return '<li>'.e($value, false).'</li>';
         }
     }
 
     /**
      * Create the HTML for a nested listing attribute.
      *
-     * @param mixed  $key
-     * @param string $type
-     * @param mixed  $value
-     *
+     * @param  mixed  $key
+     * @param  string  $type
+     * @param  mixed  $value
      * @return string
      */
     protected function nestedListing($key, $type, $value)
@@ -413,15 +375,14 @@ class HtmlBuilder
         if (is_int($key)) {
             return $this->listing($type, $value);
         } else {
-            return '<li>' . $key . $this->listing($type, $value) . '</li>';
+            return '<li>'.$key.$this->listing($type, $value).'</li>';
         }
     }
 
     /**
      * Build an HTML attribute string from an array.
      *
-     * @param array $attributes
-     *
+     * @param  array  $attributes
      * @return string
      */
     public function attributes($attributes)
@@ -436,15 +397,14 @@ class HtmlBuilder
             }
         }
 
-        return count($html) > 0 ? ' ' . implode(' ', $html) : '';
+        return count($html) > 0 ? ' '.implode(' ', $html) : '';
     }
 
     /**
      * Build a single attribute element.
      *
-     * @param string $key
-     * @param string|bool|array|null $value
-     *
+     * @param  string  $key
+     * @param  string|bool|array|null  $value
      * @return string
      */
     protected function attributeElement($key, $value)
@@ -464,19 +424,18 @@ class HtmlBuilder
         }
 
         if (is_array($value) && $key === 'class') {
-            return 'class="' . implode(' ', $value) . '"';
+            return 'class="'.implode(' ', $value).'"';
         }
 
         if (! is_null($value)) {
-            return $key . '="' . e($value, false) . '"';
+            return $key.'="'.e($value, false).'"';
         }
     }
 
     /**
      * Obfuscate a string to prevent spam-bots from sniffing it.
      *
-     * @param string $value
-     *
+     * @param  string  $value
      * @return string
      */
     public function obfuscate($value)
@@ -493,11 +452,11 @@ class HtmlBuilder
             // the randomly obfuscated letters out of the string on the responses.
             switch (rand(1, 3)) {
                 case 1:
-                    $safe .= '&#' . ord($letter) . ';';
+                    $safe .= '&#'.ord($letter).';';
                     break;
 
                 case 2:
-                    $safe .= '&#x' . dechex(ord($letter)) . ';';
+                    $safe .= '&#x'.dechex(ord($letter)).';';
                     break;
 
                 case 3:
@@ -511,11 +470,9 @@ class HtmlBuilder
     /**
      * Generate a meta tag.
      *
-     * @param string|null $name
-     * @param string $content
-     * @param array  $attributes
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string|null  $name
+     * @param  string  $content
+     * @return HtmlString
      */
     public function meta($name, $content, array $attributes = [])
     {
@@ -523,30 +480,28 @@ class HtmlBuilder
 
         $attributes = array_merge($defaults, $attributes);
 
-        return $this->toHtmlString('<meta' . $this->attributes($attributes) . '>');
+        return $this->toHtmlString('<meta'.$this->attributes($attributes).'>');
     }
 
     /**
      * Generate an html tag.
      *
-     * @param string $tag
-     * @param mixed $content
-     * @param array  $attributes
-     *
-     * @return \Illuminate\Support\HtmlString
+     * @param  string  $tag
+     * @param  mixed  $content
+     * @return HtmlString
      */
     public function tag($tag, $content, array $attributes = [])
     {
         $content = is_array($content) ? implode('', $content) : $content;
-        return $this->toHtmlString('<' . $tag . $this->attributes($attributes) . '>' . $this->toHtmlString($content) . '</' . $tag . '>');
+
+        return $this->toHtmlString('<'.$tag.$this->attributes($attributes).'>'.$this->toHtmlString($content).'</'.$tag.'>');
     }
 
     /**
      * Transform the string to an Html serializable object
      *
-     * @param $html
      *
-     * @return \Illuminate\Support\HtmlString
+     * @return HtmlString
      */
     protected function toHtmlString($html)
     {
@@ -556,12 +511,11 @@ class HtmlBuilder
     /**
      * Dynamically handle calls to the class.
      *
-     * @param  string $method
+     * @param  string  $method
      * @param  array  $parameters
+     * @return View|mixed
      *
-     * @return \Illuminate\Contracts\View\View|mixed
-     *
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($method, $parameters)
     {
