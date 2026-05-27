@@ -5,8 +5,10 @@ namespace Collective\Html;
 use BadMethodCallException;
 use Carbon\Carbon;
 use DateTime;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Contracts\Session\Session;
+use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
@@ -14,7 +16,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Illuminate\Support\ViewErrorBag;
 
 class FormBuilder
 {
@@ -630,6 +634,73 @@ class FormBuilder
         }
 
         return $this->select($name, $months, $selected, $options);
+    }
+
+    /**
+     * Create a select box populated from a PHP enum's cases.
+     *
+     * Backed enums use their value as the option value; pure enums use the
+     * case name. Labels come from a `label()` method on the enum when present,
+     * otherwise the case name is humanized.
+     *
+     * @param  class-string  $enum
+     * @param  string|bool  $selected
+     */
+    public function enumSelect($name, string $enum, $selected = null, array $selectAttributes = [], array $optionsAttributes = []): HtmlString
+    {
+        return $this->select($name, $this->enumToList($enum), $selected, $selectAttributes, $optionsAttributes);
+    }
+
+    /**
+     * Build a value => label list from an enum class.
+     *
+     * @param  class-string  $enum
+     * @return array<int|string, string>
+     */
+    protected function enumToList(string $enum): array
+    {
+        $list = [];
+
+        foreach ($enum::cases() as $case) {
+            $value = $case instanceof \BackedEnum ? $case->value : $case->name;
+
+            $list[$value] = method_exists($case, 'label') ? $case->label() : Str::headline($case->name);
+        }
+
+        return $list;
+    }
+
+    /**
+     * Create a select box populated from an Eloquent source.
+     *
+     * The source may be a model class string, a query/relation, an Eloquent
+     * collection, a base collection, or a plain array of rows.
+     *
+     * @param  class-string|iterable|object  $source
+     * @param  string|bool  $selected
+     */
+    public function modelSelect($name, $source, $labelColumn = 'name', $valueColumn = 'id', $selected = null, array $selectAttributes = [], array $optionsAttributes = []): HtmlString
+    {
+        return $this->select($name, $this->modelToList($source, $labelColumn, $valueColumn), $selected, $selectAttributes, $optionsAttributes);
+    }
+
+    /**
+     * Resolve a model source into a value => label list.
+     *
+     * @param  class-string|iterable|object  $source
+     * @return array<int|string, mixed>
+     */
+    protected function modelToList($source, $labelColumn, $valueColumn): array
+    {
+        if (is_string($source) && class_exists($source)) {
+            $source = $source::query()->get();
+        }
+
+        if (is_object($source) && ! $source instanceof Collection && method_exists($source, 'get')) {
+            $source = $source->get();
+        }
+
+        return collect($source)->pluck($labelColumn, $valueColumn)->all();
     }
 
     /**
@@ -1263,6 +1334,88 @@ class FormBuilder
     public function oldInputIsEmpty(): bool
     {
         return isset($this->session) && count((array) $this->session->getOldInput()) === 0;
+    }
+
+    /**
+     * Get the validation errors shared with the current view, if any.
+     *
+     * @return MessageBag|ViewErrorBag|null
+     */
+    protected function errors()
+    {
+        $errors = $this->view->shared('errors');
+
+        return is_null($errors) ? null : $errors;
+    }
+
+    /**
+     * Determine whether the given field has a validation error.
+     */
+    public function hasError($name): bool
+    {
+        $errors = $this->errors();
+
+        return $errors !== null && $errors->has($this->transformKey($name));
+    }
+
+    /**
+     * Get the first validation error message for the given field.
+     */
+    public function getError($name): ?string
+    {
+        if (! $this->hasError($name)) {
+            return null;
+        }
+
+        return $this->errors()->first($this->transformKey($name));
+    }
+
+    /**
+     * Render the validation feedback element for a field.
+     *
+     * Returns an empty HtmlString when the field has no error, so it is safe
+     * to drop after any control unconditionally.
+     */
+    public function error($name, array $attributes = []): HtmlString
+    {
+        if (! $this->hasError($name)) {
+            return $this->toHtmlString('');
+        }
+
+        $attributes['class'] = trim(($attributes['class'] ?? '').' '.$this->cssClass('feedback', 'invalid-feedback'));
+
+        return $this->toHtmlString('<div'.$this->html->attributes($attributes).'>'.e($this->getError($name), false).'</div>');
+    }
+
+    /**
+     * Merge the configured "invalid" class into the given field options when
+     * the field currently has a validation error. Existing options pass
+     * through untouched, keeping `Form::` calls backward compatible.
+     */
+    public function withValidationClass($name, array $options): array
+    {
+        if (! $this->hasError($name)) {
+            return $options;
+        }
+
+        $options['class'] = trim(($options['class'] ?? '').' '.$this->cssClass('invalid', 'is-invalid'));
+
+        return $options;
+    }
+
+    /**
+     * Resolve a configured CSS class, falling back to the given default when
+     * no config repository is bound (e.g. outside a full application).
+     */
+    protected function cssClass(string $key, string $default): string
+    {
+        $container = Container::getInstance();
+
+        if ($container && $container->bound('config')) {
+            return $container->make('config')->get("html.classes.{$key}", $default);
+        }
+
+        return $default;
     }
 
     /**

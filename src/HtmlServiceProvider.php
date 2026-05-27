@@ -22,6 +22,14 @@ class HtmlServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../config/html.php', 'html');
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/html.php' => $this->app->configPath('html.php'),
+            ], 'html-config');
+        }
+
         $this->registerHtmlBuilder();
 
         $this->registerFormBuilder();
