@@ -28,9 +28,8 @@ class HtmlBuilder
      * Convert an HTML string to entities.
      *
      * @param  string  $value
-     * @return string
      */
-    public function entities($value)
+    public function entities($value): string
     {
         return htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
@@ -39,9 +38,8 @@ class HtmlBuilder
      * Convert entities to HTML characters.
      *
      * @param  string  $value
-     * @return string
      */
-    public function decode($value)
+    public function decode($value): string
     {
         return html_entity_decode($value, ENT_QUOTES, 'UTF-8');
     }
@@ -52,9 +50,8 @@ class HtmlBuilder
      * @param  string  $url
      * @param  array  $attributes
      * @param  bool  $secure
-     * @return HtmlString
      */
-    public function script($url, $attributes = [], $secure = null)
+    public function script($url, $attributes = [], $secure = null): HtmlString
     {
         $attributes['src'] = $this->url->asset($url, $secure);
 
@@ -67,9 +64,8 @@ class HtmlBuilder
      * @param  string  $url
      * @param  array  $attributes
      * @param  bool  $secure
-     * @return HtmlString
      */
-    public function style($url, $attributes = [], $secure = null)
+    public function style($url, $attributes = [], $secure = null): HtmlString
     {
         $defaults = ['media' => 'all', 'type' => 'text/css', 'rel' => 'stylesheet'];
 
@@ -87,9 +83,8 @@ class HtmlBuilder
      * @param  string  $alt
      * @param  array  $attributes
      * @param  bool  $secure
-     * @return HtmlString
      */
-    public function image($url, $alt = null, $attributes = [], $secure = null)
+    public function image($url, $alt = null, $attributes = [], $secure = null): HtmlString
     {
         $attributes['alt'] = $alt;
 
@@ -105,9 +100,8 @@ class HtmlBuilder
      * @param  string  $url
      * @param  array  $attributes
      * @param  bool  $secure
-     * @return HtmlString
      */
-    public function favicon($url, $attributes = [], $secure = null)
+    public function favicon($url, $attributes = [], $secure = null): HtmlString
     {
         $defaults = ['rel' => 'shortcut icon', 'type' => 'image/x-icon'];
 
@@ -126,9 +120,8 @@ class HtmlBuilder
      * @param  array  $attributes
      * @param  bool  $secure
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function link($url, $title = null, $attributes = [], $secure = null, $escape = true)
+    public function link($url, $title = null, $attributes = [], $secure = null, $escape = true): HtmlString
     {
         $url = $this->url->to($url, [], $secure);
 
@@ -150,9 +143,8 @@ class HtmlBuilder
      * @param  string  $title
      * @param  array  $attributes
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function secureLink($url, $title = null, $attributes = [], $escape = true)
+    public function secureLink($url, $title = null, $attributes = [], $escape = true): HtmlString
     {
         return $this->link($url, $title, $attributes, true, $escape);
     }
@@ -165,9 +157,8 @@ class HtmlBuilder
      * @param  array  $attributes
      * @param  bool  $secure
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function linkAsset($url, $title = null, $attributes = [], $secure = null, $escape = true)
+    public function linkAsset($url, $title = null, $attributes = [], $secure = null, $escape = true): HtmlString
     {
         $url = $this->url->asset($url, $secure);
 
@@ -181,9 +172,8 @@ class HtmlBuilder
      * @param  string  $title
      * @param  array  $attributes
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function linkSecureAsset($url, $title = null, $attributes = [], $escape = true)
+    public function linkSecureAsset($url, $title = null, $attributes = [], $escape = true): HtmlString
     {
         return $this->linkAsset($url, $title, $attributes, true, $escape);
     }
@@ -197,9 +187,8 @@ class HtmlBuilder
      * @param  array  $attributes
      * @param  bool  $secure
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function linkRoute($name, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true)
+    public function linkRoute($name, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true): HtmlString
     {
         return $this->link($this->url->route($name, $parameters), $title, $attributes, $secure, $escape);
     }
@@ -213,9 +202,8 @@ class HtmlBuilder
      * @param  array  $attributes
      * @param  bool  $secure
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function linkAction($action, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true)
+    public function linkAction($action, $title = null, $parameters = [], $attributes = [], $secure = null, $escape = true): HtmlString
     {
         return $this->link($this->url->action($action, $parameters), $title, $attributes, $secure, $escape);
     }
@@ -227,9 +215,8 @@ class HtmlBuilder
      * @param  string  $title
      * @param  array  $attributes
      * @param  bool  $escape
-     * @return HtmlString
      */
-    public function mailto($email, $title = null, $attributes = [], $escape = true)
+    public function mailto($email, $title = null, $attributes = [], $escape = true): HtmlString
     {
         $email = $this->email($email);
 
@@ -248,9 +235,8 @@ class HtmlBuilder
      * Obfuscate an e-mail address to prevent spam-bots from sniffing it.
      *
      * @param  string  $email
-     * @return string
      */
-    public function email($email)
+    public function email($email): string
     {
         return str_replace('@', '&#64;', $this->obfuscate($email));
     }
@@ -259,9 +245,8 @@ class HtmlBuilder
      * Generates non-breaking space entities based on number supplied.
      *
      * @param  int  $num
-     * @return string
      */
-    public function nbsp($num = 1)
+    public function nbsp($num = 1): string
     {
         return str_repeat('&nbsp;', $num);
     }
@@ -292,11 +277,8 @@ class HtmlBuilder
 
     /**
      * Generate a description list of items.
-     *
-     *
-     * @return HtmlString
      */
-    public function dl(array $list, array $attributes = [])
+    public function dl(array $list, array $attributes = []): HtmlString
     {
         $attributes = $this->attributes($attributes);
 
@@ -383,9 +365,8 @@ class HtmlBuilder
      * Build an HTML attribute string from an array.
      *
      * @param  array  $attributes
-     * @return string
      */
-    public function attributes($attributes)
+    public function attributes($attributes): string
     {
         $html = [];
 
@@ -436,9 +417,8 @@ class HtmlBuilder
      * Obfuscate a string to prevent spam-bots from sniffing it.
      *
      * @param  string  $value
-     * @return string
      */
-    public function obfuscate($value)
+    public function obfuscate($value): string
     {
         $safe = '';
 
@@ -472,9 +452,8 @@ class HtmlBuilder
      *
      * @param  string|null  $name
      * @param  string  $content
-     * @return HtmlString
      */
-    public function meta($name, $content, array $attributes = [])
+    public function meta($name, $content, array $attributes = []): HtmlString
     {
         $defaults = compact('name', 'content');
 
@@ -488,9 +467,8 @@ class HtmlBuilder
      *
      * @param  string  $tag
      * @param  mixed  $content
-     * @return HtmlString
      */
-    public function tag($tag, $content, array $attributes = [])
+    public function tag($tag, $content, array $attributes = []): HtmlString
     {
         $content = is_array($content) ? implode('', $content) : $content;
 
