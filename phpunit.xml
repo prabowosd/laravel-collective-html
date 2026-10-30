@@ -8,13 +8,16 @@
          processIsolation="false"
          stopOnError="false"
          stopOnFailure="false"
+         failOnDeprecation="true"
+         failOnNotice="true"
+         failOnWarning="true"
 >
     <testsuites>
         <testsuite name="Laravel Html Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
-    <source>
+    <source ignoreIndirectDeprecations="true">
         <include>
             <directory suffix=".php">./src</directory>
         </include>

@@ -55,9 +55,7 @@ class HtmlServiceProvider extends ServiceProvider
      */
     protected function registerHtmlBuilder(): void
     {
-        $this->app->singleton('html', function ($app) {
-            return new HtmlBuilder($app['view'], $app['url']);
-        });
+        $this->app->singleton('html', fn ($app) => new HtmlBuilder($app['view'], $app['url']));
     }
 
     /**
@@ -89,9 +87,7 @@ class HtmlServiceProvider extends ServiceProvider
                         $snakeMethod = Str::snake($method);
                         $directive = strtolower($namespace).'_'.$snakeMethod;
 
-                        $bladeCompiler->directive($directive, function ($expression) use ($namespace, $method) {
-                            return "<?php echo $namespace::$method($expression); ?>";
-                        });
+                        $bladeCompiler->directive($directive, fn ($expression) => "<?php echo $namespace::$method($expression); ?>");
                     }
                 }
             }
