@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Collective Revived</title>
-<meta name="description" content="Form:: and Html:: builders for Laravel 10 to 13 and PHP 8.2 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
+<meta name="description" content="Form:: and Html:: builders for Laravel 6 to 13 and PHP 8.0 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,6 +167,8 @@ td:first-child { color: var(--code); }
 .matrix th:not(:first-child), .matrix td:not(:first-child) { text-align: center; }
 .matrix td:first-child { font-family: var(--mono); }
 .ok { color: var(--strong); font-family: var(--mono); font-size: .85rem; }
+.matrix .ok { font-size: .78rem; }
+.matrix td { white-space: nowrap; }
 .ok::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--hl-fn); margin-right: .55rem; vertical-align: middle; }
 .na { color: var(--muted); font-family: var(--mono); font-size: .8rem; }
 
@@ -237,15 +239,15 @@ footer a:hover { color: var(--strong); }
         <p class="kicker label">Collective Revived / laravelcollective/html</p>
         <hr class="kicker-rule">
         <h1><span>Form::open().</span><span>Html::link().</span><span>On Laravel 13.</span></h1>
-        <p class="lede">The original package is abandoned and stops at Laravel 10. This one keeps the same <b>Collective\Html</b> namespace and the same output on <b>Laravel 10 to 13</b> and <b>PHP 8.2 to 8.5</b>. Your views do not change.</p>
+        <p class="lede">The original package is abandoned and stops at Laravel 10. This one keeps the same <b>Collective\Html</b> namespace and the same output on <b>Laravel 6 to 13</b> and <b>PHP 8.0 to 8.5</b>. Install it on the version you run today and keep it through every upgrade.</p>
         <div class="term">
           <div class="term-head"><span class="dots"><i></i><i></i><i></i></span><span class="label">Terminal</span><button class="copy" type="button" data-copy="install-cmd">Copy</button></div>
           <pre><span class="p">$</span> <span id="install-cmd">composer require prabowosd/laravel-collective-html</span></pre>
         </div>
         <ul class="facts">
           <li>Drop-in for 6.x</li>
-          <li>Laravel 10 to 13</li>
-          <li>PHP 8.2 to 8.5</li>
+          <li>Laravel 6 to 13</li>
+          <li>PHP 8.0 to 8.5</li>
           <li>MIT</li>
         </ul>
       </div>
@@ -269,7 +271,7 @@ footer a:hover { color: var(--strong); }
         <h2>Coming from laravelcollective/html</h2>
         <p>Namespace, class names, facades and helpers are the ones you already import.</p>
         <ol class="steps">
-          <li><div><b>Remove the original package</b><span>It is abandoned and does not install on Laravel 11 or newer.</span>
+          <li><div><b>Remove the original package</b><span>It is abandoned and does not install on Laravel 11 or newer, so it blocks your next upgrade.</span>
             <div class="block"><pre><code class="hl">composer remove laravelcollective/html</code></pre></div></div></li>
           <li><div><b>Require this one</b><span>Same <code>Collective\Html</code> classes, same rendered HTML.</span>
             <div class="block"><pre><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></div></div></li>
@@ -478,19 +480,21 @@ footer a:hover { color: var(--strong); }
       <section id="support">
         <span class="label">10 / Support</span>
         <h2>Support matrix</h2>
-        <p>Every supported pair runs the full test suite in CI, and the suite fails on any deprecation the package raises.</p>
+        <p>Every supported pair runs the full test suite in CI. From PHP 8.1 up, the suite also fails on any deprecation the package raises.</p>
         <div class="table-wrap">
           <table class="matrix">
-            <thead><tr><th>PHP</th><th>Laravel 10</th><th>Laravel 11</th><th>Laravel 12</th><th>Laravel 13</th></tr></thead>
+            <thead><tr><th>PHP</th><th>L6</th><th>L7</th><th>L8</th><th>L9</th><th>L10</th><th>L11</th><th>L12</th><th>L13</th></tr></thead>
             <tbody>
-              <tr><td>8.2</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td></tr>
-              <tr><td>8.3</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
-              <tr><td>8.4</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
-              <tr><td>8.5</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.0</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td></tr>
+              <tr><td>8.1</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td></tr>
+              <tr><td>8.2</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td></tr>
+              <tr><td>8.3</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.4</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.5</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
             </tbody>
           </table>
         </div>
-        <p>n/a marks a pair Laravel itself does not support.</p>
+        <p>n/a marks a pair that Laravel itself does not support. Two features need more than the floor: the <code>&lt;x-form-*&gt;</code> components need Laravel 7, because class based Blade components arrived there, and <code>Form::enumSelect()</code> needs PHP 8.1, which introduced enums.</p>
       </section>
     </main>
 
