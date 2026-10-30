@@ -59,7 +59,7 @@ jobs:
 
       - name: Run tests
         run: |
-          # PHPUnit 9 (PHP 8.0) does not read the PHPUnit 10+ config.
+          # PHP 8.0 and 8.1 get PHPUnit 9, which does not read the PHPUnit 11 config.
           if vendor/bin/phpunit --version | grep -q 'PHPUnit 9'; then
             vendor/bin/phpunit --configuration phpunit.legacy.xml
           else

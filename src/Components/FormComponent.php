@@ -42,7 +42,8 @@ abstract class FormComponent extends Component
      */
     protected function extraAttributes(): array
     {
-        return isset($this->attributes) ? $this->attributes->getAttributes() : [];
+        // getAttributes() only exists from Laravel 8; the bag is iterable on 7 too.
+        return isset($this->attributes) ? iterator_to_array($this->attributes) : [];
     }
 
     /**
