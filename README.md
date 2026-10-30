@@ -1,4 +1,9 @@
-# Laravel Collective HTML
+<p align="center"><a href="https://collective.sdp.im"><img src="docs/logo.svg" width="96" alt="Collective Revived"></a></p>
+
+# Collective Revived
+
+**Documentation: [collective.sdp.im](https://collective.sdp.im)**
+
 
 [![Latest Stable Version](https://poser.pugx.org/prabowosd/laravel-collective-html/v/stable)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 [![Total Downloads](https://poser.pugx.org/prabowosd/laravel-collective-html/downloads)](https://packagist.org/packages/prabowosd/laravel-collective-html)
@@ -27,7 +32,7 @@ The package declares `replace` for `laravelcollective/html` 6.x, so any dependen
 
 ## Documentation
 
-The API mirrors the classic Laravel HTML/Form builders — `Form::` and `Html::` facades behave as documented in the long-standing HTML builder docs.
+Full documentation, with the rendered output of every example, lives at **[collective.sdp.im](https://collective.sdp.im)**. The API mirrors the classic Laravel HTML/Form builders, so `Form::` and `Html::` behave as they always have.
 
 ## Quick Start
 
