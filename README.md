@@ -23,6 +23,8 @@ You can install this package via composer:
 composer require prabowosd/laravel-collective-html
 ```
 
+The package declares `replace` for `laravelcollective/html` 6.x, so any dependency that still requires the original is satisfied by this fork and both are never installed side by side. If your project requires `laravelcollective/html` directly, remove it first (`composer remove laravelcollective/html`).
+
 ## Documentation
 
 The API mirrors the classic Laravel HTML/Form builders — `Form::` and `Html::` facades behave as documented in the long-standing HTML builder docs.
