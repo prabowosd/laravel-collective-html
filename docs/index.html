@@ -4,497 +4,472 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Collective Revived</title>
-<meta name="description" content="The HTML and Form builders your Blade views already use, kept working on Laravel 10 to 13 and PHP 8.2 to 8.5. A drop-in replacement for laravelcollective/html.">
+<meta name="description" content="Form:: and Html:: builders for Laravel 10 to 13 and PHP 8.2 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..800,0..100;1,9..144,300..800,0..100&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --paper: #f2ede3;
-  --paper-2: #e8e1d2;
-  --ink: #1d1b17;
-  --ink-2: #5b5549;
-  --ink-3: #8a8272;
-  --rule: #cfc5b3;
-  --accent: #b8432b;
-  --accent-soft: rgba(184, 67, 43, .1);
-  --code-bg: #faf7f1;
-  --grain-opacity: .35;
-  --serif: "Fraunces", Georgia, serif;
-  --sans: "Instrument Sans", "Helvetica Neue", sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, monospace;
-  color-scheme: light;
+  --bg: #0a0a0b;
+  --panel: #0f0f11;
+  --line: rgba(255, 255, 255, .12);
+  --line-strong: #3f3f46;
+  --text: #a1a1aa;
+  --muted: #71717a;
+  --strong: #f4f4f5;
+  --code: #e4e4e7;
+  --red: #ae1c27;
+  --red-2: #c93a3a;
+  --hl-key: #e0646c;
+  --hl-str: #d9b98a;
+  --hl-fn: #7fcf9e;
+  --hl-var: #8fb1d9;
+  --btn-bg: #f4f4f5;
+  --btn-fg: #0a0a0b;
+  --texture: #111113;
+  --sans: "Geist", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, monospace;
+  color-scheme: dark;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #15140f; --paper-2: #1e1c17; --ink: #ece5d6; --ink-2: #a8a090; --ink-3: #7a7365;
-    --rule: #3a362e; --accent: #e2694d; --accent-soft: rgba(226, 105, 77, .12); --code-bg: #1a1914;
-    --grain-opacity: .18; color-scheme: dark;
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #fafafa; --panel: #f4f4f5; --line: rgba(0, 0, 0, .1); --line-strong: #d4d4d8;
+    --text: #52525b; --muted: #71717a; --strong: #09090b; --code: #18181b;
+    --red-2: #ae1c27; --hl-key: #ae1c27; --hl-str: #8a5a12; --hl-fn: #13703f; --hl-var: #1f5a9e;
+    --btn-bg: #09090b; --btn-fg: #fafafa; --texture: #efeff1; color-scheme: light;
   }
 }
-:root[data-theme="dark"] {
-  --paper: #15140f; --paper-2: #1e1c17; --ink: #ece5d6; --ink-2: #a8a090; --ink-3: #7a7365;
-  --rule: #3a362e; --accent: #e2694d; --accent-soft: rgba(226, 105, 77, .12); --code-bg: #1a1914;
-  --grain-opacity: .18; color-scheme: dark;
+:root[data-theme="light"] {
+  --bg: #fafafa; --panel: #f4f4f5; --line: rgba(0, 0, 0, .1); --line-strong: #d4d4d8;
+  --text: #52525b; --muted: #71717a; --strong: #09090b; --code: #18181b;
+  --red-2: #ae1c27; --hl-key: #ae1c27; --hl-str: #8a5a12; --hl-fn: #13703f; --hl-var: #1f5a9e;
+  --btn-bg: #09090b; --btn-fg: #fafafa; --texture: #efeff1; color-scheme: light;
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font: 400 1.0625rem/1.65 var(--sans);
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
-body::before {
-  content: "";
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  opacity: var(--grain-opacity);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .32 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-body > * { position: relative; z-index: 1; }
-a { color: inherit; text-decoration-color: var(--accent); text-underline-offset: .2em; text-decoration-thickness: 1px; }
-a:hover { color: var(--accent); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-::selection { background: var(--accent); color: var(--paper); }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 1px solid var(--red-2); outline-offset: 3px; }
+::selection { background: var(--red); color: #fff; }
+code, pre { font-family: var(--mono); font-variant-ligatures: none; }
 
-/* Masthead */
-.masthead {
-  position: sticky; top: 0; z-index: 10;
-  display: flex; align-items: center; gap: 1.25rem;
-  padding: .85rem clamp(1rem, 4vw, 3rem);
-  background: color-mix(in srgb, var(--paper) 88%, transparent);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--rule);
+.label { font: 400 .75rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+/* Left rail */
+.rail {
+  position: fixed; inset: 0 auto 0 0; width: 80px; z-index: 20;
+  display: flex; flex-direction: column; align-items: center; padding: 2rem 0;
 }
-.brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
-.brand svg { width: 30px; height: 30px; flex: none; }
-.brand span { font: 600 1.05rem/1 var(--serif); letter-spacing: -.01em; }
-.brand em { font-style: italic; font-weight: 400; color: var(--accent); }
-.masthead nav { margin-left: auto; display: flex; gap: 1.25rem; align-items: center; font-size: .9rem; }
-.masthead nav a { text-decoration: none; color: var(--ink-2); }
-.masthead nav a:hover { color: var(--accent); }
-.theme-toggle {
-  border: 1px solid var(--rule); background: transparent; color: var(--ink-2);
-  width: 2rem; height: 2rem; border-radius: 50%; cursor: pointer; display: grid; place-items: center;
+.rail .mark { width: 34px; height: 34px; display: block; }
+.rail nav { margin: auto 0; display: flex; flex-direction: column; gap: 2rem; }
+.rail nav a {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font: 400 .78rem/1 var(--mono); letter-spacing: .18em; color: var(--muted); position: relative;
 }
-.theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
-.theme-toggle svg { width: 15px; height: 15px; }
+.rail nav a:hover, .rail nav a.active { color: var(--strong); }
+.rail nav a.active::after { content: ""; position: absolute; right: -14px; top: 50%; width: 2px; height: 18px; margin-top: -9px; background: var(--red-2); }
+.rail .foot { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.rail .foot::before { content: ""; width: 1px; height: 64px; background: var(--line-strong); margin-bottom: .75rem; }
+.icon-btn { color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.icon-btn:hover { color: var(--strong); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+.page { margin-left: 80px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 2.5rem; }
 
 /* Hero */
-.hero {
-  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem);
-  align-items: center;
-  padding: clamp(3rem, 8vw, 7rem) clamp(1rem, 4vw, 3rem) clamp(2.5rem, 6vw, 5rem);
-  max-width: 1280px; margin: 0 auto;
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.hero-texture {
+  position: absolute; inset: 0; margin: 0; padding: 1rem 0 0 1rem;
+  font: 400 13px/22px var(--mono); color: var(--texture); white-space: pre; pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000 70%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 35%, #000 70%, transparent);
 }
-.kicker {
-  font: 500 .75rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3);
-  display: flex; align-items: center; gap: .75rem; margin: 0 0 1.75rem;
-}
-.kicker::before { content: ""; width: 2.25rem; height: 1px; background: var(--accent); }
-.hero h1 {
-  font: 340 clamp(3rem, 8.5vw, 6.75rem)/.92 var(--serif);
-  font-variation-settings: "opsz" 144, "SOFT" 40;
-  letter-spacing: -.035em; margin: 0 0 1.75rem;
-}
-.hero h1 em {
-  font-style: italic; font-weight: 300; color: var(--accent);
-  font-variation-settings: "opsz" 144, "SOFT" 100;
-  position: relative; display: inline-block;
-}
-.hero h1 .struck { position: relative; color: var(--ink-3); font-weight: 300; }
-.hero h1 .struck::after {
-  content: ""; position: absolute; left: -2%; right: -2%; top: 54%; height: .06em;
-  background: var(--accent); transform: rotate(-3deg); transform-origin: left;
-  animation: strike .7s .5s cubic-bezier(.6, 0, .2, 1) both;
-}
-@keyframes strike { from { transform: rotate(-3deg) scaleX(0); } to { transform: rotate(-3deg) scaleX(1); } }
-.lede { font-size: 1.2rem; line-height: 1.55; color: var(--ink-2); max-width: 34ch; margin: 0 0 2.25rem; }
-.lede strong { color: var(--ink); font-weight: 500; }
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 3rem; align-items: center; min-height: min(92vh, 860px); padding-top: 5rem; padding-bottom: 5rem; }
+.kicker { display: flex; align-items: center; gap: .9rem; margin: 0 0 1.25rem; }
+.kicker::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red-2); flex: none; }
+.kicker-rule { width: 64px; height: 2px; background: var(--red); margin: 0 0 3rem; border: 0; }
+.hero h1 { margin: 0 0 2.5rem; font: 600 clamp(2.4rem, 6.4vw, 5.4rem)/1.04 var(--sans); letter-spacing: -.045em; color: var(--strong); }
+.hero h1 span { display: block; }
+.hero h1 span:nth-child(2) { color: var(--text); }
+.hero h1 span:nth-child(3) { color: var(--muted); }
+.hero .lede { max-width: 38rem; font-size: 1.2rem; line-height: 1.6; margin: 0 0 2.5rem; }
+.hero .lede b { color: var(--strong); font-weight: 500; }
+.big-mark { width: 100%; max-width: 320px; justify-self: end; }
 
-.install {
-  display: flex; align-items: stretch; max-width: 34rem;
-  border: 1px solid var(--ink); background: var(--code-bg);
-  box-shadow: 4px 4px 0 var(--ink);
-}
-.install code { flex: 1; min-width: 0; padding: .9rem 1rem; font: 400 .88rem/1.4 var(--mono); white-space: nowrap; overflow-x: auto; }
-.install code::before { content: "$ "; color: var(--ink-3); }
-.copy {
-  border: 0; border-left: 1px solid var(--ink); background: var(--ink); color: var(--paper);
-  font: 500 .72rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
-  padding: 0 1rem; cursor: pointer; min-width: 5.5rem;
-}
-.copy:hover { background: var(--accent); }
-.facts { list-style: none; padding: 0; margin: 1.75rem 0 0; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; font: 400 .8rem/1.4 var(--mono); color: var(--ink-3); }
-.facts li::before { content: "+ "; color: var(--accent); }
+.term { border: 1px solid var(--line); background: var(--panel); max-width: 40rem; }
+.term-head { display: flex; align-items: stretch; border-bottom: 1px solid var(--line); }
+.term-head .dots { display: flex; gap: 6px; align-items: center; padding: 0 1.1rem; }
+.term-head .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+.term-head .label { display: flex; align-items: center; padding: .9rem 0; flex: 1; }
+.copy { border: 0; border-left: 1px solid var(--line); background: none; color: var(--muted); font: 400 .75rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; padding: 0 1.25rem; cursor: pointer; min-width: 6.5rem; }
+.copy:hover { color: var(--strong); }
+.term pre { margin: 0; padding: 1.25rem 1.4rem; font-size: .9rem; line-height: 1.6; color: var(--code); overflow-x: auto; }
+.term pre .p { color: var(--red-2); }
 
-/* Proof sheet */
-.proof {
-  position: relative; background: var(--code-bg); border: 1px solid var(--rule);
-  padding: 1.5rem 1.5rem 1.25rem; transform: rotate(.6deg);
-  box-shadow: 0 1px 0 var(--rule), 0 24px 48px -28px rgba(40, 30, 10, .35);
-  animation: settle .9s .15s cubic-bezier(.2, .7, .2, 1) both;
-}
-@keyframes settle { from { opacity: 0; transform: rotate(3deg) translateY(16px); } to { opacity: 1; transform: rotate(.6deg); } }
-.proof-head { display: flex; justify-content: space-between; font: 500 .68rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); border-bottom: 1px dashed var(--rule); padding-bottom: .75rem; margin-bottom: 1rem; }
-.proof pre { margin: 0; font: 400 .82rem/1.75 var(--mono); white-space: pre-wrap; word-break: break-word; }
-.proof .arrow { font: italic 400 .95rem/1 var(--serif); color: var(--accent); margin: 1rem 0 .6rem; display: flex; align-items: center; gap: .5rem; }
-.proof .arrow::after { content: ""; flex: 1; height: 1px; background: var(--accent); opacity: .4; }
-.stamp {
-  position: absolute; right: -.9rem; bottom: -1.1rem;
-  font: 600 .66rem/1.15 var(--mono); letter-spacing: .12em; text-transform: uppercase; text-align: center;
-  color: var(--accent); border: 2px solid var(--accent); border-radius: 50%;
-  width: 5.75rem; height: 5.75rem; display: grid; place-items: center; padding: .5rem;
-  transform: rotate(-14deg); background: var(--paper);
-  animation: stamp .35s 1.1s cubic-bezier(.3, 1.6, .5, 1) both;
-}
-@keyframes stamp { from { opacity: 0; transform: rotate(-14deg) scale(1.6); } to { opacity: 1; transform: rotate(-14deg) scale(1); } }
+.facts { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.facts li { border: 1px solid var(--line); padding: .45rem .7rem; font: 400 .78rem/1 var(--mono); color: var(--text); }
 
-/* Body layout */
-.layout {
-  display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem);
-  max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem) 6rem;
-  border-top: 1px solid var(--rule);
-}
-.toc { position: sticky; top: 5.5rem; align-self: start; padding-top: 3rem; font-size: .88rem; }
-.toc p { font: 500 .68rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 1rem; }
-.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc; }
-.toc li { counter-increment: toc; }
-.toc a { display: flex; gap: .7rem; padding: .32rem 0; text-decoration: none; color: var(--ink-2); border-left: 2px solid transparent; padding-left: .75rem; margin-left: -.85rem; }
-.toc a::before { content: counter(toc, decimal-leading-zero); font: 400 .72rem/1.9 var(--mono); color: var(--ink-3); }
-.toc a:hover, .toc a.active { color: var(--ink); border-left-color: var(--accent); }
-.toc a.active::before { color: var(--accent); }
+/* Docs body */
+.docs { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 5rem; padding-top: 1rem; padding-bottom: 8rem; }
+.toc { position: sticky; top: 2.5rem; align-self: start; padding-top: 5rem; }
+.toc .label { display: block; margin-bottom: 1.25rem; }
+.toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line-strong); }
+.toc a { display: block; padding: .5rem 0 .5rem 1.15rem; margin-left: -1px; border-left: 2px solid transparent; color: var(--text); font-size: .95rem; }
+.toc a:hover { color: var(--strong); }
+.toc a.active { color: var(--strong); border-left-color: var(--red-2); }
+.toc .cta { margin-top: 2rem; border: 1px solid var(--line); padding: 1.25rem; }
+.toc .cta p { color: var(--strong); margin: 0 0 1rem; font-size: .95rem; }
+.btn { display: inline-block; background: var(--btn-bg); color: var(--btn-fg); font: 500 .95rem/1 var(--sans); padding: .85rem 1.25rem; }
+.btn:hover { opacity: .9; }
+.toc .btn { display: inline-block; padding: .85rem 1.25rem; margin: 0; border: 0; color: var(--btn-fg); }
 
-main { min-width: 0; max-width: 46rem; }
-section { padding-top: 3.5rem; counter-increment: sec; }
-main { counter-reset: sec; }
-section > h2 {
-  display: flex; align-items: baseline; gap: 1rem;
-  font: 400 clamp(1.9rem, 4vw, 2.6rem)/1.05 var(--serif); font-variation-settings: "opsz" 96, "SOFT" 30;
-  letter-spacing: -.02em; margin: 0 0 1.25rem;
-}
-section > h2::before { content: "\00A7\2009" counter(sec); font: 400 .8rem/1 var(--mono); color: var(--accent); letter-spacing: .05em; flex: none; transform: translateY(-.6em); }
-h3 { font: 600 1.15rem/1.3 var(--serif); margin: 2.25rem 0 .6rem; letter-spacing: -.005em; }
-p { margin: 0 0 1rem; }
-p, li { color: var(--ink-2); }
-p strong, li strong { color: var(--ink); font-weight: 600; }
-:not(pre) > code { font: 400 .86em/1 var(--mono); background: var(--accent-soft); color: var(--ink); padding: .15em .35em; border-radius: 3px; overflow-wrap: anywhere; }
+main { min-width: 0; }
+section { padding-top: 5rem; }
+section > .label { display: block; margin-bottom: 1rem; }
+h2 { margin: 0 0 1.5rem; font: 600 2.1rem/1.15 var(--sans); letter-spacing: -.03em; color: var(--strong); }
+h3 { margin: 2.5rem 0 .75rem; font: 600 1.05rem/1.4 var(--sans); color: var(--strong); }
+p { margin: 0 0 1.1rem; font-size: 1.05rem; line-height: 1.7; max-width: 46rem; }
+p b { color: var(--strong); font-weight: 500; }
+:not(pre) > code { font-size: .92em; color: var(--code); overflow-wrap: anywhere; }
 
-pre.code {
-  margin: 0 0 1.25rem; padding: 1.1rem 1.25rem; background: var(--code-bg);
-  border: 1px solid var(--rule); border-left: 3px solid var(--ink);
-  font: 400 .84rem/1.7 var(--mono); overflow-x: auto; color: var(--ink);
-}
-.tok-s { color: var(--accent); }
-.tok-c { color: var(--ink-3); font-style: italic; }
-.tok-k { color: var(--ink); font-weight: 500; }
+.block { border: 1px solid var(--line); background: var(--panel); margin: 0 0 1.5rem; }
+.block-head { display: flex; border-bottom: 1px solid var(--line); }
+.block-head .label { flex: 1; padding: 1.05rem 1.4rem; }
+.block pre { margin: 0; padding: 1.3rem 1.4rem; font-size: .88rem; line-height: 1.75; color: var(--code); overflow-x: auto; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.pair > div + div { border-left: 1px solid var(--line); }
+.pair > div + div .block-head .label { color: var(--red-2); }
 
-/* Specimen: source next to rendered output */
-.specimen { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--rule); margin: 0 0 1.5rem; background: var(--code-bg); }
-.specimen > div { min-width: 0; }
-.specimen > div + div { border-left: 1px dashed var(--rule); }
-.specimen .lbl { font: 500 .64rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); padding: .7rem 1rem 0; }
-.specimen > div + div .lbl { color: var(--accent); }
-.specimen pre { margin: 0; padding: .5rem 1rem .9rem; font: 400 .8rem/1.7 var(--mono); white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+.tok-k { color: var(--hl-key); }
+.tok-s { color: var(--hl-str); }
+.tok-f { color: var(--hl-fn); }
+.tok-v { color: var(--hl-var); }
+.tok-c { color: var(--muted); font-style: italic; }
+.tok-t { color: var(--muted); }
 
-.steps { list-style: none; counter-reset: step; padding: 0; margin: 0 0 1.5rem; }
-.steps li { counter-increment: step; display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: .25rem 1rem; padding: 1rem 0; border-top: 1px solid var(--rule); }
-.steps li:last-child { border-bottom: 1px solid var(--rule); }
-.steps li::before { content: counter(step); font: 300 1.9rem/1 var(--serif); color: var(--accent); grid-row: span 2; }
-.steps b { color: var(--ink); font-weight: 600; }
-.steps pre.code { margin: .5rem 0 0; grid-column: 2; }
+.steps { list-style: none; counter-reset: s; margin: 0 0 1.5rem; padding: 0; border-top: 1px solid var(--line); }
+.steps > li { counter-increment: s; display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+.steps > li::before { content: counter(s, decimal-leading-zero); font: 400 .78rem/1.9 var(--mono); letter-spacing: .18em; color: var(--red-2); }
+.steps > li > div { min-width: 0; }
+.steps b { display: block; color: var(--strong); font-weight: 500; font-size: 1.05rem; }
+.steps span { display: block; margin: .25rem 0 1rem; }
+.steps .block { margin: 0; }
 
-table { width: 100%; border-collapse: collapse; margin: 0 0 1.5rem; font-size: .92rem; }
-.table-wrap { overflow-x: auto; margin: 0 0 1.5rem; }
-.table-wrap table { margin: 0; }
-th { text-align: left; font: 500 .66rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); padding: .75rem .75rem .6rem 0; border-bottom: 1px solid var(--ink); }
-td { padding: .6rem .75rem .6rem 0; border-bottom: 1px solid var(--rule); color: var(--ink-2); vertical-align: top; }
-td code { white-space: nowrap; }
-.matrix td, .matrix th { text-align: center; }
-.matrix th:first-child, .matrix td:first-child { text-align: left; }
-.matrix .yes { color: var(--ink); font-weight: 600; }
-.matrix .yes::before { content: "\2713"; color: var(--accent); margin-right: .3rem; }
-.matrix .no { color: var(--ink-3); font: 400 .78rem var(--mono); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); margin: 0 0 1.5rem; }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th { text-align: left; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); font: 400 .72rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+td { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.6; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { color: var(--code); }
+.matrix th:not(:first-child), .matrix td:not(:first-child) { text-align: center; }
+.matrix td:first-child { font-family: var(--mono); }
+.ok { color: var(--strong); font-family: var(--mono); font-size: .85rem; }
+.ok::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--hl-fn); margin-right: .55rem; vertical-align: middle; }
+.na { color: var(--muted); font-family: var(--mono); font-size: .8rem; }
 
-.note { border-left: 3px solid var(--accent); padding: .25rem 0 .25rem 1.1rem; margin: 0 0 1.5rem; }
+.note { border: 1px solid var(--line); border-left: 2px solid var(--red-2); padding: 1rem 1.25rem; margin: 0 0 1.5rem; }
 .note p { margin: 0; }
 
-footer { border-top: 1px solid var(--rule); padding: 2.5rem clamp(1rem, 4vw, 3rem) 3rem; max-width: 1280px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 1rem 3rem; justify-content: space-between; font-size: .85rem; color: var(--ink-3); }
-footer p { margin: 0; max-width: 46ch; color: var(--ink-3); }
+footer { border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; padding-top: 2.5rem; padding-bottom: 3rem; }
+footer p { margin: 0; font-size: .9rem; color: var(--muted); max-width: 42rem; }
+footer a:hover { color: var(--strong); }
 
-@media (max-width: 960px) {
-  .hero { grid-template-columns: minmax(0, 1fr); }
-  .hero > * { min-width: 0; }
-  .proof { transform: none; animation: none; margin-right: .9rem; }
-  .layout { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 1080px) {
+  .docs { grid-template-columns: minmax(0, 1fr); }
   .toc { display: none; }
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .big-mark { display: none; }
 }
-@media (max-width: 640px) {
-  .masthead nav a:not(.keep) { display: none; }
-  .specimen { grid-template-columns: 1fr; }
-  .specimen > div + div { border-left: 0; border-top: 1px dashed var(--rule); }
-  .install code { font-size: .78rem; }
-  .copy { min-width: 4.5rem; padding: 0 .75rem; }
-  td code { white-space: normal; }
-  .facts { gap: .3rem 1rem; }
+@media (max-width: 760px) {
+  .rail { position: sticky; top: 0; width: auto; height: auto; flex-direction: row; padding: .9rem 1rem; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .rail .mark { width: 26px; height: 26px; }
+  .rail nav { display: none; }
+  .rail .foot { flex-direction: row; margin-left: auto; gap: 1.25rem; }
+  .rail .foot::before { display: none; }
+  .page { margin-left: 0; }
+  .wrap { padding: 0 1rem; }
+  .hero .wrap { padding-top: 3rem; padding-bottom: 3.5rem; }
+  .kicker-rule { margin-bottom: 2rem; }
+  .pair { grid-template-columns: minmax(0, 1fr); }
+  .pair > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .steps > li { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  h2 { font-size: 1.75rem; }
+  section { padding-top: 3.5rem; }
+  .copy { min-width: 5rem; padding: 0 .9rem; }
 }
-/* Keep => and != literal: JetBrains Mono would draw them as arrows. */
-:root code, :root pre { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; }
-  html { scroll-behavior: auto; }
-}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
 </head>
 <body>
 
-<header class="masthead">
-  <a class="brand" href="#" aria-label="Collective Revived home">
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <path d="M44.86 16.68 A20 20 0 1 0 44.86 47.32" fill="none" stroke="currentColor" stroke-width="12"/>
-      <path d="M23.4 23.6 L21.2 18.9 L16.6 19.4 L12.4 13.2" fill="none" stroke="var(--paper)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M23.4 23.6 L21.2 18.9 L16.6 19.4 L12.4 13.2" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+<aside class="rail">
+  <a href="#" aria-label="Collective Revived, top of page">
+    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
+      <mask id="crack-s"><rect width="64" height="64" fill="#fff"/><path d="M23.4 23.6 L21.2 18.9 L16.6 19.4 L12.4 13.2" fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="square"/></mask>
+      <path d="M44.86 16.68 A20 20 0 1 0 44.86 47.32" fill="none" stroke="var(--red)" stroke-width="12" mask="url(#crack-s)"/>
     </svg>
-    <span>Collective <em>Revived</em></span>
   </a>
-  <nav aria-label="External">
-    <a href="#migrate">Migrate</a>
-    <a href="https://packagist.org/packages/prabowosd/laravel-collective-html">Packagist</a>
-    <a class="keep" href="https://github.com/prabowosd/laravel-collective-html">GitHub</a>
-    <button class="theme-toggle" type="button" aria-label="Toggle dark mode">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-    </button>
+  <nav aria-label="Sections">
+    <a href="#install">Install</a>
+    <a href="#forms">Forms</a>
+    <a href="#html">Html</a>
+    <a href="#support">Support</a>
   </nav>
-</header>
-
-<div class="hero">
-  <div>
-    <p class="kicker">laravelcollective/html, maintained</p>
-    <h1><span class="struck">Abandoned.</span><br><em>Revived.</em></h1>
-    <p class="lede">The <strong>Form::</strong> and <strong>Html::</strong> builders your Blade views already call, kept working on <strong>Laravel 13</strong> and <strong>PHP 8.5</strong>. Same namespace, same output. Swap one line in composer.json.</p>
-    <div class="install">
-      <code id="install-cmd">composer require prabowosd/laravel-collective-html</code>
-      <button class="copy" type="button" data-copy="install-cmd">Copy</button>
-    </div>
-    <ul class="facts">
-      <li>Laravel 10 to 13</li>
-      <li>PHP 8.2 to 8.5</li>
-      <li>Collective\Html namespace</li>
-      <li>MIT</li>
-    </ul>
+  <div class="foot">
+    <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light and dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+    </button>
+    <a class="icon-btn" href="https://packagist.org/packages/prabowosd/laravel-collective-html" aria-label="Packagist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="m4 7.4 8 4.6 8-4.6M12 12v9.2"/></svg>
+    </a>
+    <a class="icon-btn" href="https://github.com/prabowosd/laravel-collective-html" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+    </a>
   </div>
+</aside>
 
-  <figure class="proof" aria-label="Example: Blade source and rendered HTML">
-    <div class="proof-head"><span>edit.blade.php</span><span>proof 01</span></div>
-<pre><code class="hl">{!! Form::model($user, ['url' => 'profile', 'method' => 'PUT']) !!}
-{!! Form::label('email', 'E-Mail Address') !!}
-{!! Form::email('email') !!}
-{!! Form::close() !!}</code></pre>
-    <p class="arrow">renders, unchanged</p>
-<pre><code class="hl">&lt;form method="POST" action="https://example.com/profile" accept-charset="UTF-8"&gt;
-&lt;input name="_method" type="hidden" value="PUT"&gt;
-&lt;input name="_token" type="hidden" value="…"&gt;
-&lt;label for="email"&gt;E-Mail Address&lt;/label&gt;
-&lt;input name="email" type="email" value="sdp@example.com" id="email"&gt;
-&lt;/form&gt;</code></pre>
-    <span class="stamp">Drop-in<br>6.x API</span>
-  </figure>
-</div>
+<div class="page">
+  <header class="hero">
+    <pre class="hero-texture" aria-hidden="true"></pre>
+    <div class="wrap">
+      <div>
+        <p class="kicker label">Collective Revived / laravelcollective/html</p>
+        <hr class="kicker-rule">
+        <h1><span>Form::open().</span><span>Html::link().</span><span>On Laravel 13.</span></h1>
+        <p class="lede">The original package is abandoned and stops at Laravel 10. This one keeps the same <b>Collective\Html</b> namespace and the same output on <b>Laravel 10 to 13</b> and <b>PHP 8.2 to 8.5</b>. Your views do not change.</p>
+        <div class="term">
+          <div class="term-head"><span class="dots"><i></i><i></i><i></i></span><span class="label">Terminal</span><button class="copy" type="button" data-copy="install-cmd">Copy</button></div>
+          <pre><span class="p">$</span> <span id="install-cmd">composer require prabowosd/laravel-collective-html</span></pre>
+        </div>
+        <ul class="facts">
+          <li>Drop-in for 6.x</li>
+          <li>Laravel 10 to 13</li>
+          <li>PHP 8.2 to 8.5</li>
+          <li>MIT</li>
+        </ul>
+      </div>
+      <svg class="big-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <mask id="crack-l"><rect width="64" height="64" fill="#fff"/><path d="M23.4 23.6 L21.2 18.9 L16.6 19.4 L12.4 13.2" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="square"/></mask>
+        <path d="M44.86 16.68 A20 20 0 1 0 44.86 47.32" fill="none" stroke="var(--red)" stroke-width="12" mask="url(#crack-l)"/>
+      </svg>
+    </div>
+  </header>
 
-<div class="layout">
-  <aside class="toc" aria-label="Contents">
-    <p>Contents</p>
-    <ol>
-      <li><a href="#install">Install</a></li>
-      <li><a href="#migrate">Migrate</a></li>
-      <li><a href="#forms">Opening forms</a></li>
-      <li><a href="#fields">Fields</a></li>
-      <li><a href="#selects">Selects</a></li>
-      <li><a href="#validation">Validation</a></li>
-      <li><a href="#components">Blade components</a></li>
-      <li><a href="#html">Html builder</a></li>
-      <li><a href="#config">Configuration</a></li>
-      <li><a href="#support">Support matrix</a></li>
-    </ol>
-  </aside>
+  <div class="wrap docs">
+    <main>
+      <section id="install">
+        <span class="label">01 / Install</span>
+        <h2>Install</h2>
+        <div class="block"><div class="block-head"><span class="label">Shell</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></div>
+        <p>The service provider and the <code>Form</code> and <code>Html</code> facade aliases register through package discovery. Nothing to add to <code>config/app.php</code>.</p>
+        <p>The package declares <code>replace</code> for <code>laravelcollective/html</code> 6.x. If another dependency still asks for the original, Composer resolves it to this package instead of installing both, so the <code>Collective\Html</code> classes are only defined once.</p>
+      </section>
 
-  <main>
-    <section id="install">
-      <h2>Install</h2>
-      <pre class="code"><code class="hl">composer require prabowosd/laravel-collective-html</code></pre>
-      <p>The service provider and the <code>Form</code> and <code>Html</code> facade aliases register themselves through package discovery. Nothing to add to <code>config/app.php</code>.</p>
-      <p>The package declares <code>replace</code> for <code>laravelcollective/html</code> 6.x. If another dependency in your tree still asks for the original, Composer resolves it to this package instead of installing both, so the <code>Collective\Html</code> classes are only ever defined once.</p>
-    </section>
+      <section id="migrate">
+        <span class="label">02 / Migrate</span>
+        <h2>Coming from laravelcollective/html</h2>
+        <p>Namespace, class names, facades and helpers are the ones you already import.</p>
+        <ol class="steps">
+          <li><div><b>Remove the original package</b><span>It is abandoned and does not install on Laravel 11 or newer.</span>
+            <div class="block"><pre><code class="hl">composer remove laravelcollective/html</code></pre></div></div></li>
+          <li><div><b>Require this one</b><span>Same <code>Collective\Html</code> classes, same rendered HTML.</span>
+            <div class="block"><pre><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></div></div></li>
+          <li><div><b>Clear compiled views</b><span>Blade directives such as <code>@form_text</code> live in cached views.</span>
+            <div class="block"><pre><code class="hl">php artisan view:clear</code></pre></div></div></li>
+        </ol>
+        <div class="note"><p>If you subclass <code>FormBuilder</code> or <code>HtmlBuilder</code>, check your overrides. Most methods now declare native return types such as <code>HtmlString</code>, and an override must declare a compatible one.</p></div>
+      </section>
 
-    <section id="migrate">
-      <h2>Migrate from laravelcollective/html</h2>
-      <p>The namespace, class names, facades and helpers are the ones you already import. Your views do not change.</p>
-      <ol class="steps">
-        <li><b>Remove the original package</b><span>It is abandoned and does not install on Laravel 11 or newer.</span>
-          <pre class="code"><code class="hl">composer remove laravelcollective/html</code></pre></li>
-        <li><b>Require the revived one</b><span>Same <code>Collective\Html</code> classes, same rendered HTML.</span>
-          <pre class="code"><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></li>
-        <li><b>Clear compiled views</b><span>Blade directives such as <code>@form_text</code> are compiled into cached views.</span>
-          <pre class="code"><code class="hl">php artisan view:clear</code></pre></li>
-      </ol>
-      <div class="note"><p>If you subclass <code>FormBuilder</code> or <code>HtmlBuilder</code>, check your overrides: most methods now declare native return types such as <code>HtmlString</code>, and an override must declare a compatible one.</p></div>
-    </section>
-
-    <section id="forms">
-      <h2>Opening forms</h2>
-      <p><code>Form::open()</code> takes the target as <code>url</code>, <code>route</code> or <code>action</code>. Methods other than GET and POST are spoofed with a hidden <code>_method</code> field, and every non-GET form gets the CSRF token.</p>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Form::open([
+      <section id="forms">
+        <span class="label">03 / Forms</span>
+        <h2>Opening a form</h2>
+        <p><code>Form::open()</code> takes the target as <code>url</code>, <code>route</code> or <code>action</code>. Methods other than GET and POST are spoofed with a hidden <code>_method</code> field, and every non-GET form gets the CSRF token.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::open([
     'url' => 'profile',
     'method' => 'PUT',
     'files' => true,
 ]) !!}</code></pre></div>
-        <div><p class="lbl">Renders</p><pre><code class="hl">&lt;form method="POST" action="https://example.com/profile" accept-charset="UTF-8" enctype="multipart/form-data"&gt;
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;form method="POST"
+      action="https://example.com/profile"
+      accept-charset="UTF-8"
+      enctype="multipart/form-data"&gt;
 &lt;input name="_method" type="hidden" value="PUT"&gt;
 &lt;input name="_token" type="hidden" value="…"&gt;</code></pre></div>
-      </div>
-      <pre class="code"><code class="hl">{!! Form::open(['route' => ['users.update', $user]]) !!}
+        </div>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::open(['route' => ['users.update', $user]]) !!}
 {!! Form::open(['action' => [UserController::class, 'store']]) !!}
 
 // Model binding: a field with no explicit value is filled from the model
 {!! Form::model($user, ['route' => ['users.update', $user], 'method' => 'PATCH']) !!}
 
-{!! Form::close() !!}</code></pre>
-    </section>
+{!! Form::close() !!}</code></pre></div>
+      </section>
 
-    <section id="fields">
-      <h2>Fields</h2>
-      <p>Every field resolves its value in the same order: old input from the session, then the value you pass, then the bound model. A field gets an <code>id</code> automatically when a <code>Form::label()</code> with the same name was rendered before it.</p>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Form::text('username', 'sdp', [
+      <section id="fields">
+        <span class="label">04 / Fields</span>
+        <h2>Fields</h2>
+        <p>Every field resolves its value in the same order: old input from the session, then the value you pass, then the bound model. A field gets an <code>id</code> when a <code>Form::label()</code> with the same name was rendered before it.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::text('username', 'sdp', [
     'placeholder' => 'Username',
 ]) !!}</code></pre></div>
-        <div><p class="lbl">Renders</p><pre><code class="hl">&lt;input placeholder="Username" name="username" type="text" value="sdp"&gt;</code></pre></div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Method</th><th>Signature</th></tr></thead>
-          <tbody>
-            <tr><td><code>text</code>, <code>email</code>, <code>tel</code>, <code>number</code>, <code>url</code>, <code>search</code>, <code>range</code>, <code>color</code>, <code>hidden</code></td><td><code>($name, $value = null, $options = [])</code></td></tr>
-            <tr><td><code>date</code>, <code>time</code>, <code>datetime</code>, <code>datetimeLocal</code>, <code>month</code>, <code>week</code></td><td>Same, and a <code>DateTimeInterface</code> value is formatted for the input type</td></tr>
-            <tr><td><code>password</code>, <code>file</code></td><td><code>($name, $options = [])</code>, never filled</td></tr>
-            <tr><td><code>textarea</code></td><td><code>($name, $value = null, $options = [])</code>, <code>'size' =&gt; '50x10'</code> sets cols and rows</td></tr>
-            <tr><td><code>checkbox</code></td><td><code>($name, $value = 1, $checked = null, $options = [])</code></td></tr>
-            <tr><td><code>radio</code></td><td><code>($name, $value = null, $checked = null, $options = [])</code>, value defaults to the name</td></tr>
-            <tr><td><code>label</code></td><td><code>($name, $value = null, $options = [], $escape_html = true)</code></td></tr>
-            <tr><td><code>submit</code>, <code>button</code>, <code>reset</code></td><td><code>($value = null, $options = [])</code></td></tr>
-            <tr><td><code>image</code></td><td><code>($url, $name = null, $attributes = [])</code></td></tr>
-            <tr><td><code>input</code></td><td><code>($type, $name, $value = null, $options = [])</code> for any other type</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>Boolean attributes are written as numeric keys: <code>['required', 'autofocus']</code> renders <code>required autofocus</code>.</p>
-    </section>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;input placeholder="Username"
+       name="username" type="text"
+       value="sdp"&gt;</code></pre></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Signature</th></tr></thead>
+            <tbody>
+              <tr><td>text, email, tel, number, url, search, range, color, hidden</td><td><code>($name, $value = null, $options = [])</code></td></tr>
+              <tr><td>date, time, datetime, datetimeLocal, month, week</td><td>Same. A <code>DateTimeInterface</code> value is formatted for the input type.</td></tr>
+              <tr><td>password, file</td><td><code>($name, $options = [])</code>, never filled</td></tr>
+              <tr><td>textarea</td><td><code>($name, $value = null, $options = [])</code>. <code>'size' =&gt; '50x10'</code> sets cols and rows.</td></tr>
+              <tr><td>checkbox</td><td><code>($name, $value = 1, $checked = null, $options = [])</code></td></tr>
+              <tr><td>radio</td><td><code>($name, $value = null, $checked = null, $options = [])</code>, value defaults to the name</td></tr>
+              <tr><td>label</td><td><code>($name, $value = null, $options = [], $escape_html = true)</code></td></tr>
+              <tr><td>submit, button</td><td><code>($value = null, $options = [])</code></td></tr>
+              <tr><td>reset</td><td><code>($value, $attributes = [])</code></td></tr>
+              <tr><td>image</td><td><code>($url, $name = null, $attributes = [])</code></td></tr>
+              <tr><td>input</td><td><code>($type, $name, $value = null, $options = [])</code> for any other type</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Boolean attributes go in as values without keys: <code>['required', 'autofocus']</code> renders <code>required autofocus</code>.</p>
+      </section>
 
-    <section id="selects">
-      <h2>Selects</h2>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Form::select('size', [
+      <section id="selects">
+        <span class="label">05 / Selects</span>
+        <h2>Selects</h2>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::select('size', [
     'L' => 'Large',
     'S' => 'Small',
 ], 'S') !!}</code></pre></div>
-        <div><p class="lbl">Renders</p><pre><code class="hl">&lt;select name="size"&gt;
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;select name="size"&gt;
   &lt;option value="L"&gt;Large&lt;/option&gt;
   &lt;option value="S" selected="selected"&gt;Small&lt;/option&gt;
 &lt;/select&gt;</code></pre></div>
-      </div>
-      <p>Nested arrays become <code>&lt;optgroup&gt;</code>s. Pass an array as the selected value for a <code>multiple</code> select, and <code>'placeholder' =&gt; 'Pick one'</code> for an empty first option.</p>
-      <pre class="code"><code class="hl">{!! Form::selectRange('qty', 1, 10) !!}
+        </div>
+        <p>Nested arrays become <code>&lt;optgroup&gt;</code>s. Pass an array as the selected value for a <code>multiple</code> select, and a <code>placeholder</code> attribute for an empty first option.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::selectRange('qty', 1, 10) !!}
 {!! Form::selectYear('year', 2020, 2030) !!}
-{!! Form::selectMonth('month') !!}   // month names in the app locale</code></pre>
+{!! Form::selectMonth('month') !!}   // month names in the app locale</code></pre></div>
 
-      <h3>From an enum</h3>
-      <p>Backed enums use their value, pure enums the case name. A <code>label()</code> method on the enum supplies the option text, otherwise the case name is humanized.</p>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Form::enumSelect(
+        <h3>From an enum</h3>
+        <p>Backed enums use their value, pure enums the case name. A <code>label()</code> method on the enum supplies the option text, otherwise the case name is written as a headline.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::enumSelect(
     'status',
     OrderStatus::class,
     'shipped',
 ) !!}</code></pre></div>
-        <div><p class="lbl">Renders</p><pre><code class="hl">&lt;select name="status"&gt;
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;select name="status"&gt;
   &lt;option value="pending"&gt;Pending&lt;/option&gt;
   &lt;option value="shipped" selected="selected"&gt;Shipped&lt;/option&gt;
 &lt;/select&gt;</code></pre></div>
-      </div>
+        </div>
 
-      <h3>From Eloquent</h3>
-      <p>The source can be a model class, a query or relation, a collection, or a plain array of rows.</p>
-      <pre class="code"><code class="hl">{!! Form::modelSelect('category_id', Category::class, 'name', 'id', $selected) !!}
-{!! Form::modelSelect('owner_id', $team->members(), 'full_name') !!}</code></pre>
-    </section>
+        <h3>From Eloquent</h3>
+        <p>The source can be a model class, a query or relation, a collection, or a plain array of rows.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::modelSelect('category_id', Category::class, 'name', 'id', $selected) !!}
+{!! Form::modelSelect('owner_id', $team->members(), 'full_name') !!}</code></pre></div>
+      </section>
 
-    <section id="validation">
-      <h2>Validation</h2>
-      <p>These read the <code>$errors</code> bag Laravel shares with every view. Array names map to dot keys, so <code>person[name]</code> checks <code>person.name</code>. Classic calls are untouched: the invalid class is only added where you ask for it.</p>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Form::text('email', null,
+      <section id="validation">
+        <span class="label">06 / Validation</span>
+        <h2>Validation helpers</h2>
+        <p>These read the <code>$errors</code> bag Laravel shares with every view. Array names map to dot keys, so <code>person[name]</code> checks <code>person.name</code>. Classic calls are untouched: the invalid class is added only where you ask for it.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::text('email', null,
     Form::withValidationClass('email', [
         'class' => 'form-control',
     ])
 ) !!}
 {!! Form::error('email') !!}</code></pre></div>
-        <div><p class="lbl">Renders, with an error</p><pre><code class="hl">&lt;input class="form-control is-invalid" name="email" type="text"&gt;
-&lt;div class="invalid-feedback"&gt;The email field is required.&lt;/div&gt;</code></pre></div>
-      </div>
-      <pre class="code"><code class="hl">@if (Form::hasError('email')) ... @endif
-{{ Form::getError('email') }}   // first message, or null</code></pre>
-      <p><code>Form::error()</code> returns an empty string when the field is valid, so it is safe after every control.</p>
-    </section>
+          <div><div class="block-head"><span class="label">Output, with an error</span></div>
+<pre><code class="hl">&lt;input class="form-control is-invalid"
+       name="email" type="text"&gt;
+&lt;div class="invalid-feedback"&gt;
+  The email field is required.
+&lt;/div&gt;</code></pre></div>
+        </div>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">@if (Form::hasError('email')) ... @endif
+{{ Form::getError('email') }}   // first message, or null</code></pre></div>
+        <p><code>Form::error()</code> returns an empty string when the field is valid, so it is safe after every control.</p>
+      </section>
 
-    <section id="components">
-      <h2>Blade components</h2>
-      <p>Label, control and error feedback in one tag. Any attribute that is not a prop (<code>placeholder</code>, <code>class</code>, <code>data-*</code>) lands on the control.</p>
-      <pre class="code"><code class="hl">&lt;x-form-input name="email" label="Email" type="email" placeholder="you@example.com" /&gt;
+      <section id="components">
+        <span class="label">07 / Components</span>
+        <h2>Blade components</h2>
+        <p>Label, control and error feedback in one tag. Attributes that are not props, such as <code>placeholder</code>, <code>class</code> or <code>data-*</code>, land on the control.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">&lt;x-form-input name="email" label="Email" type="email" placeholder="you@example.com" /&gt;
 &lt;x-form-input name="bio" label="Bio" type="textarea" rows="4" /&gt;
 
 &lt;x-form-select name="role" label="Role" :options="['admin' =&gt; 'Admin', 'member' =&gt; 'Member']" selected="member" /&gt;
 &lt;x-form-select name="status" label="Status" :enum="App\Enums\OrderStatus::class" /&gt;
 &lt;x-form-select name="category_id" label="Category" :model="App\Models\Category::class" label-column="name" /&gt;
 
-&lt;x-form-checkbox name="agree" label="I accept the terms" :checked="true" /&gt;</code></pre>
-    </section>
+&lt;x-form-checkbox name="agree" label="I accept the terms" :checked="true" /&gt;</code></pre></div>
+      </section>
 
-    <section id="html">
-      <h2>Html builder</h2>
-      <p>Assets, links and small markup helpers. URLs go through Laravel's URL generator.</p>
-      <div class="specimen">
-        <div><p class="lbl">Blade</p><pre><code class="hl">{!! Html::link('docs', 'Read the docs', [
+      <section id="html">
+        <span class="label">08 / Html</span>
+        <h2>Html builder</h2>
+        <p>Assets, links and small markup helpers. URLs go through Laravel's URL generator.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Html::link('docs', 'Read the docs', [
     'class' => 'btn',
 ]) !!}</code></pre></div>
-        <div><p class="lbl">Renders</p><pre><code class="hl">&lt;a href="https://example.com/docs" class="btn"&gt;Read the docs&lt;/a&gt;</code></pre></div>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Method</th><th>Output</th></tr></thead>
-          <tbody>
-            <tr><td><code>script</code>, <code>style</code>, <code>favicon</code>, <code>image</code></td><td><code>&lt;script&gt;</code>, <code>&lt;link&gt;</code> and <code>&lt;img&gt;</code> tags for an asset path</td></tr>
-            <tr><td><code>link</code>, <code>secureLink</code>, <code>linkAsset</code>, <code>linkRoute</code>, <code>linkAction</code></td><td>Anchors to a URL, asset, named route or controller action</td></tr>
-            <tr><td><code>mailto</code>, <code>email</code>, <code>obfuscate</code></td><td>Entity-obfuscated addresses</td></tr>
-            <tr><td><code>ul</code>, <code>ol</code>, <code>dl</code></td><td>Lists from arrays, nested arrays nest</td></tr>
-            <tr><td><code>meta</code>, <code>tag</code></td><td>Any element with attributes</td></tr>
-            <tr><td><code>entities</code>, <code>decode</code>, <code>nbsp</code></td><td>Escaping helpers</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p>The global helpers <code>link_to()</code>, <code>link_to_asset()</code>, <code>link_to_route()</code> and <code>link_to_action()</code> are still there, each guarded so it never clashes with a function you define yourself.</p>
-    </section>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;a href="https://example.com/docs"
+   class="btn"&gt;Read the docs&lt;/a&gt;</code></pre></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Output</th></tr></thead>
+            <tbody>
+              <tr><td>script, style, favicon, image</td><td><code>&lt;script&gt;</code>, <code>&lt;link&gt;</code> and <code>&lt;img&gt;</code> tags for an asset path</td></tr>
+              <tr><td>link, secureLink, linkAsset, linkRoute, linkAction</td><td>Anchors to a URL, asset, named route or controller action</td></tr>
+              <tr><td>mailto, email, obfuscate</td><td>Addresses written as mixed HTML entities</td></tr>
+              <tr><td>ul, ol, dl</td><td>Lists from arrays</td></tr>
+              <tr><td>meta, tag</td><td>Any element with attributes</td></tr>
+              <tr><td>entities, decode, nbsp</td><td>Escaping helpers</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The global helpers <code>link_to()</code>, <code>link_to_asset()</code>, <code>link_to_route()</code> and <code>link_to_action()</code> are still there, each behind a <code>function_exists</code> check.</p>
+      </section>
 
-    <section id="config">
-      <h2>Configuration</h2>
-      <p>Classes used by the validation helpers and components default to Bootstrap. Publish the config to map them to Tailwind or anything else.</p>
-      <pre class="code"><code class="hl">php artisan vendor:publish --tag=html-config</code></pre>
-      <pre class="code"><code class="hl">// config/html.php
-'classes' => [
+      <section id="config">
+        <span class="label">09 / Config</span>
+        <h2>Classes are configuration</h2>
+        <p>The validation helpers and components use Bootstrap class names by default. Publish the config to map them to Tailwind or anything else.</p>
+        <div class="block"><div class="block-head"><span class="label">Shell</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">php artisan vendor:publish --tag=html-config</code></pre></div>
+        <div class="block"><div class="block-head"><span class="label">config/html.php</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">'classes' => [
     'control' => 'form-control',
     'select' => 'form-select',
     'label' => 'form-label',
@@ -503,73 +478,108 @@ footer p { margin: 0; max-width: 46ch; color: var(--ink-3); }
     'check_wrapper' => 'form-check',
     'check_input' => 'form-check-input',
     'check_label' => 'form-check-label',
-],</code></pre>
-    </section>
+],</code></pre></div>
+      </section>
 
-    <section id="support">
-      <h2>Support matrix</h2>
-      <p>Every supported pair runs the full test suite in CI, and the suite fails on any deprecation the package raises.</p>
-      <div class="table-wrap">
-        <table class="matrix">
-          <thead><tr><th>PHP</th><th>Laravel 10</th><th>Laravel 11</th><th>Laravel 12</th><th>Laravel 13</th></tr></thead>
-          <tbody>
-            <tr><td>8.2</td><td class="yes">tested</td><td class="yes">tested</td><td class="yes">tested</td><td class="no">not supported by Laravel</td></tr>
-            <tr><td>8.3</td><td class="yes">tested</td><td class="yes">tested</td><td class="yes">tested</td><td class="yes">tested</td></tr>
-            <tr><td>8.4</td><td class="no">not supported by Laravel</td><td class="yes">tested</td><td class="yes">tested</td><td class="yes">tested</td></tr>
-            <tr><td>8.5</td><td class="no">not supported by Laravel</td><td class="yes">tested</td><td class="yes">tested</td><td class="yes">tested</td></tr>
-          </tbody>
-        </table>
+      <section id="support">
+        <span class="label">10 / Support</span>
+        <h2>Support matrix</h2>
+        <p>Every supported pair runs the full test suite in CI, and the suite fails on any deprecation the package raises.</p>
+        <div class="table-wrap">
+          <table class="matrix">
+            <thead><tr><th>PHP</th><th>Laravel 10</th><th>Laravel 11</th><th>Laravel 12</th><th>Laravel 13</th></tr></thead>
+            <tbody>
+              <tr><td>8.2</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td></tr>
+              <tr><td>8.3</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.4</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.5</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>n/a marks a pair Laravel itself does not support.</p>
+      </section>
+    </main>
+
+    <aside class="toc" aria-label="On this page">
+      <span class="label">On this page</span>
+      <ol>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#migrate">Migrate</a></li>
+        <li><a href="#forms">Opening a form</a></li>
+        <li><a href="#fields">Fields</a></li>
+        <li><a href="#selects">Selects</a></li>
+        <li><a href="#validation">Validation helpers</a></li>
+        <li><a href="#components">Blade components</a></li>
+        <li><a href="#html">Html builder</a></li>
+        <li><a href="#config">Configuration</a></li>
+        <li><a href="#support">Support matrix</a></li>
+      </ol>
+      <div class="cta">
+        <p>Found a form that renders differently?</p>
+        <a class="btn" href="https://github.com/prabowosd/laravel-collective-html/pulls">Open a pull request</a>
       </div>
-    </section>
-  </main>
-</div>
+    </aside>
+  </div>
 
-<footer>
-  <p>Collective Revived keeps the API of <code>laravelcollective/html</code> alive for current Laravel. The original builders are the work of the Laravel Collective and its contributors.</p>
-  <p>Maintained by Satrio Dwi Prabowo. Released under the MIT license.</p>
-</footer>
+  <footer>
+    <div class="wrap">
+      <p>Collective Revived keeps the <code>laravelcollective/html</code> API working on current Laravel. The original builders are the work of the Laravel Collective and its contributors.</p>
+      <p>Maintained by <a href="https://sdp.im">Satrio Dwi Prabowo</a>. MIT license.</p>
+    </div>
+  </footer>
+</div>
 
 <script>
 (() => {
   const root = document.documentElement;
-  try {
-    const saved = localStorage.getItem('theme');
-    if (saved) root.dataset.theme = saved;
-  } catch (e) {}
+  try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (e) {}
   document.querySelector('.theme-toggle').addEventListener('click', () => {
-    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
     root.dataset.theme = dark ? 'light' : 'dark';
     try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
   });
 
-  document.querySelectorAll('[data-copy]').forEach(btn => btn.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(document.getElementById(btn.dataset.copy).textContent);
-      btn.textContent = 'Copied';
-    } catch (e) {
-      btn.textContent = 'Select';
-    }
-    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
-  }));
+  // Faint hero backdrop, built from the same calls the docs describe.
+  const lines = [
+    "{!! Form::open(['route' => ['users.update', $user], 'method' => 'PUT']) !!}   {!! Form::label('email', 'E-Mail Address') !!}   {!! Form::email('email') !!}",
+    "Html::link('docs', 'Read the docs')   {!! Form::select('size', ['L' => 'Large', 'S' => 'Small'], 'S') !!}   {!! Form::token() !!}   {!! Form::close() !!}",
+    "{!! Form::enumSelect('status', OrderStatus::class) !!}   {!! Form::error('email') !!}   Form::withValidationClass('email', ['class' => 'form-control'])",
+    "{!! Form::model($user, ['url' => 'profile']) !!}   {!! Form::checkbox('agree', 1, true) !!}   {!! Form::textarea('bio', null, ['size' => '50x10']) !!}",
+    "Html::script('js/app.js')   Html::style('css/app.css')   {!! Form::selectRange('qty', 1, 10) !!}   {!! Form::modelSelect('category_id', Category::class) !!}",
+    "<x-form-input name=\"email\" label=\"Email\" type=\"email\" />   <x-form-select name=\"role\" :options=\"$roles\" />   <x-form-checkbox name=\"agree\" />",
+  ];
+  document.querySelector('.hero-texture').textContent = Array.from({ length: 48 }, (_, i) => lines[i % lines.length] + '   ' + lines[(i + 3) % lines.length]).join('\n');
 
-  // Minimal highlighter: strings in accent, comments muted, Blade echo tags bold.
+  // Small highlighter for the Blade, PHP and HTML samples on this page.
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  const rule = /(\{\{--[\s\S]*?--\}\}|\/\/[^\n]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\{!!|!!\}|\{\{|\}\}|@\w+)/g;
+  const rule = /(\/\/[^\n]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\$\w+)|(\b(?:Form|Html)::\w+|\b\w+(?=\())|(\{!!|!!\}|\{\{|\}\}|@\w+|\b(?:composer|php|null|true)\b|<\/?[\w-]+|\/?>)/g;
   document.querySelectorAll('code.hl').forEach(el => {
     const src = el.textContent;
     let out = '', last = 0;
-    src.replace(rule, (m, c, s, k, i) => {
+    src.replace(rule, (m, c, s, v, f, k, i) => {
       out += esc(src.slice(last, i));
-      out += `<span class="${c ? 'tok-c' : s ? 'tok-s' : 'tok-k'}">${esc(m)}</span>`;
+      const cls = c ? 'tok-c' : s ? 'tok-s' : v ? 'tok-v' : f ? 'tok-f' : /^[<\/]/.test(m) ? 'tok-t' : 'tok-k';
+      out += `<span class="${cls}">${esc(m)}</span>`;
       last = i + m.length;
     });
     el.innerHTML = out + esc(src.slice(last));
   });
 
-  const links = [...document.querySelectorAll('.toc a')];
+  document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click', async () => {
+    const target = btn.dataset.copy ? document.getElementById(btn.dataset.copy) : btn.closest('.block').querySelector('pre');
+    try { await navigator.clipboard.writeText(target.textContent); btn.textContent = 'Copied'; }
+    catch (e) { btn.textContent = 'Failed'; }
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  }));
+
+  // Rail groups several sections under one entry.
+  const group = { install: 'install', migrate: 'install', forms: 'forms', fields: 'forms', selects: 'forms', validation: 'forms', components: 'forms', html: 'html', config: 'html', support: 'support' };
+  const toc = [...document.querySelectorAll('.toc a')], rail = [...document.querySelectorAll('.rail nav a')];
   const io = new IntersectionObserver(entries => entries.forEach(e => {
-    if (e.isIntersecting) links.forEach(a => a.classList.toggle('active', a.hash === '#' + e.target.id));
-  }), { rootMargin: '-30% 0px -60% 0px' });
+    if (!e.isIntersecting) return;
+    toc.forEach(a => a.classList.toggle('active', a.hash === '#' + e.target.id));
+    rail.forEach(a => a.classList.toggle('active', a.hash === '#' + group[e.target.id]));
+  }), { rootMargin: '-25% 0px -65% 0px' });
   document.querySelectorAll('main section').forEach(s => io.observe(s));
 })();
 </script>
