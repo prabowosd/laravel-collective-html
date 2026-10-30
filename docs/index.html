@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collective Revived</title>
+<meta name="description" content="Form:: and Html:: builders for Laravel 6 to 13 and PHP 8.0 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="canonical" href="https://collective.sdp.im/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Collective Revived">
+<meta property="og:title" content="Collective Revived: laravelcollective/html for Laravel 6 to 13">
+<meta property="og:description" content="Form:: and Html:: builders for Laravel 6 to 13 and PHP 8.0 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
+<meta property="og:url" content="https://collective.sdp.im/">
+<meta property="og:image" content="https://collective.sdp.im/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Collective Revived. Form::open(), Html::link(), Laravel 6 to 13.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Collective Revived: laravelcollective/html for Laravel 6 to 13">
+<meta name="twitter:description" content="Form:: and Html:: builders for Laravel 6 to 13 and PHP 8.0 to 8.5. A maintained, drop-in replacement for laravelcollective/html.">
+<meta name="twitter:image" content="https://collective.sdp.im/og.png">
+<meta name="theme-color" content="#0a0a0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0b;
+  --panel: #0f0f11;
+  --line: rgba(255, 255, 255, .12);
+  --line-strong: #3f3f46;
+  --text: #a1a1aa;
+  --muted: #71717a;
+  --strong: #f4f4f5;
+  --code: #e4e4e7;
+  --red: #ae1c27;
+  --red-2: #c93a3a;
+  --hl-key: #e0646c;
+  --hl-str: #d9b98a;
+  --hl-fn: #7fcf9e;
+  --hl-var: #8fb1d9;
+  --btn-bg: #f4f4f5;
+  --btn-fg: #0a0a0b;
+  --texture: #111113;
+  --sans: "Geist", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #fafafa; --panel: #f4f4f5; --line: rgba(0, 0, 0, .1); --line-strong: #d4d4d8;
+    --text: #52525b; --muted: #71717a; --strong: #09090b; --code: #18181b;
+    --red-2: #ae1c27; --hl-key: #ae1c27; --hl-str: #8a5a12; --hl-fn: #13703f; --hl-var: #1f5a9e;
+    --btn-bg: #09090b; --btn-fg: #fafafa; --texture: #efeff1; color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #fafafa; --panel: #f4f4f5; --line: rgba(0, 0, 0, .1); --line-strong: #d4d4d8;
+  --text: #52525b; --muted: #71717a; --strong: #09090b; --code: #18181b;
+  --red-2: #ae1c27; --hl-key: #ae1c27; --hl-str: #8a5a12; --hl-fn: #13703f; --hl-var: #1f5a9e;
+  --btn-bg: #09090b; --btn-fg: #fafafa; --texture: #efeff1; color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 1rem/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 1px solid var(--red-2); outline-offset: 3px; }
+::selection { background: var(--red); color: #fff; }
+code, pre { font-family: var(--mono); font-variant-ligatures: none; }
+
+.label { font: 400 .75rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+
+/* Left rail */
+.rail {
+  position: fixed; inset: 0 auto 0 0; width: 80px; z-index: 20;
+  display: flex; flex-direction: column; align-items: center; padding: 2rem 0;
+}
+.rail .mark { width: 34px; height: 34px; display: block; }
+.rail nav { margin: auto 0; display: flex; flex-direction: column; gap: 2rem; }
+.rail nav a {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font: 400 .78rem/1 var(--mono); letter-spacing: .18em; color: var(--muted); position: relative;
+}
+.rail nav a:hover, .rail nav a.active { color: var(--strong); }
+.rail nav a.active::after { content: ""; position: absolute; right: -14px; top: 50%; width: 2px; height: 18px; margin-top: -9px; background: var(--red-2); }
+.rail .foot { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.rail .foot::before { content: ""; width: 1px; height: 64px; background: var(--line-strong); margin-bottom: .75rem; }
+.icon-btn { color: var(--muted); background: none; border: 0; padding: 0; cursor: pointer; display: grid; place-items: center; }
+.icon-btn:hover { color: var(--strong); }
+.icon-btn svg { width: 18px; height: 18px; }
+
+.page { margin-left: 80px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 2.5rem; }
+
+/* Hero */
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+.hero-texture {
+  position: absolute; inset: 0; margin: 0; padding: 1rem 0 0 1rem;
+  font: 400 13px/22px var(--mono); color: var(--texture); white-space: pre; pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 35%, #000 70%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 35%, #000 70%, transparent);
+}
+.hero .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 3rem; align-items: center; min-height: min(92vh, 860px); padding-top: 5rem; padding-bottom: 5rem; }
+.kicker { display: flex; align-items: center; gap: .9rem; margin: 0 0 1.25rem; }
+.kicker::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red-2); flex: none; }
+.kicker-rule { width: 64px; height: 2px; background: var(--red); margin: 0 0 3rem; border: 0; }
+.hero h1 { margin: 0 0 2.5rem; font: 600 clamp(2.4rem, 6.4vw, 5.4rem)/1.04 var(--sans); letter-spacing: -.045em; color: var(--strong); }
+.hero h1 span { display: block; }
+.hero h1 span:nth-child(2) { color: var(--text); }
+.hero h1 span:nth-child(3) { color: var(--muted); }
+.hero .lede { max-width: 38rem; font-size: 1.2rem; line-height: 1.6; margin: 0 0 2.5rem; }
+.hero .lede b { color: var(--strong); font-weight: 500; }
+.big-mark { width: 100%; max-width: 320px; justify-self: end; }
+
+.term { border: 1px solid var(--line); background: var(--panel); max-width: 40rem; }
+.term-head { display: flex; align-items: stretch; border-bottom: 1px solid var(--line); }
+.term-head .dots { display: flex; gap: 6px; align-items: center; padding: 0 1.1rem; }
+.term-head .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line-strong); }
+.term-head .label { display: flex; align-items: center; padding: .9rem 0; flex: 1; }
+.copy { border: 0; border-left: 1px solid var(--line); background: none; color: var(--muted); font: 400 .75rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; padding: 0 1.25rem; cursor: pointer; min-width: 6.5rem; }
+.copy:hover { color: var(--strong); }
+.term pre { margin: 0; padding: 1.25rem 1.4rem; font-size: .9rem; line-height: 1.6; color: var(--code); overflow-x: auto; }
+.term pre .p { color: var(--red-2); }
+
+.facts { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.5rem 0 0; padding: 0; list-style: none; }
+.facts li { border: 1px solid var(--line); padding: .45rem .7rem; font: 400 .78rem/1 var(--mono); color: var(--text); }
+
+/* Docs body */
+.docs { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; gap: 5rem; padding-top: 1rem; padding-bottom: 8rem; }
+.toc { position: sticky; top: 2.5rem; align-self: start; padding-top: 5rem; }
+.toc .label { display: block; margin-bottom: 1.25rem; }
+.toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--line-strong); }
+.toc a { display: block; padding: .5rem 0 .5rem 1.15rem; margin-left: -1px; border-left: 2px solid transparent; color: var(--text); font-size: .95rem; }
+.toc a:hover { color: var(--strong); }
+.toc a.active { color: var(--strong); border-left-color: var(--red-2); }
+.toc .cta { margin-top: 2rem; border: 1px solid var(--line); padding: 1.25rem; }
+.toc .cta p { color: var(--strong); margin: 0 0 1rem; font-size: .95rem; }
+.btn { display: inline-block; background: var(--btn-bg); color: var(--btn-fg); font: 500 .95rem/1 var(--sans); padding: .85rem 1.25rem; }
+.btn:hover { opacity: .9; }
+.toc .btn { display: inline-block; padding: .85rem 1.25rem; margin: 0; border: 0; color: var(--btn-fg); }
+
+main { min-width: 0; }
+section { padding-top: 5rem; }
+section > .label { display: block; margin-bottom: 1rem; }
+h2 { margin: 0 0 1.5rem; font: 600 2.1rem/1.15 var(--sans); letter-spacing: -.03em; color: var(--strong); }
+h3 { margin: 2.5rem 0 .75rem; font: 600 1.05rem/1.4 var(--sans); color: var(--strong); }
+p { margin: 0 0 1.1rem; font-size: 1.05rem; line-height: 1.7; max-width: 46rem; }
+p b { color: var(--strong); font-weight: 500; }
+:not(pre) > code { font-size: .92em; color: var(--code); overflow-wrap: anywhere; }
+
+.block { border: 1px solid var(--line); background: var(--panel); margin: 0 0 1.5rem; }
+.block-head { display: flex; border-bottom: 1px solid var(--line); }
+.block-head .label { flex: 1; padding: 1.05rem 1.4rem; }
+.block pre { margin: 0; padding: 1.3rem 1.4rem; font-size: .88rem; line-height: 1.75; color: var(--code); overflow-x: auto; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.pair > div + div { border-left: 1px solid var(--line); }
+.pair > div + div .block-head .label { color: var(--red-2); }
+
+.tok-k { color: var(--hl-key); }
+.tok-s { color: var(--hl-str); }
+.tok-f { color: var(--hl-fn); }
+.tok-v { color: var(--hl-var); }
+.tok-c { color: var(--muted); font-style: italic; }
+.tok-t { color: var(--muted); }
+
+.steps { list-style: none; counter-reset: s; margin: 0 0 1.5rem; padding: 0; border-top: 1px solid var(--line); }
+.steps > li { counter-increment: s; display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); padding: 1.5rem 0; border-bottom: 1px solid var(--line); }
+.steps > li::before { content: counter(s, decimal-leading-zero); font: 400 .78rem/1.9 var(--mono); letter-spacing: .18em; color: var(--red-2); }
+.steps > li > div { min-width: 0; }
+.steps b { display: block; color: var(--strong); font-weight: 500; font-size: 1.05rem; }
+.steps span { display: block; margin: .25rem 0 1rem; }
+.steps .block { margin: 0; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); margin: 0 0 1.5rem; }
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th { text-align: left; padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); font: 400 .72rem/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+td { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.6; }
+tr:last-child td { border-bottom: 0; }
+td:first-child { color: var(--code); }
+.matrix th:not(:first-child), .matrix td:not(:first-child) { text-align: center; }
+.matrix td:first-child { font-family: var(--mono); }
+.ok { color: var(--strong); font-family: var(--mono); font-size: .85rem; }
+.matrix .ok { font-size: .78rem; }
+.matrix td { white-space: nowrap; }
+.ok::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--hl-fn); margin-right: .55rem; vertical-align: middle; }
+.na { color: var(--muted); font-family: var(--mono); font-size: .8rem; }
+
+.note { border: 1px solid var(--line); border-left: 2px solid var(--red-2); padding: 1rem 1.25rem; margin: 0 0 1.5rem; }
+.note p { margin: 0; }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1.5rem; padding-top: 2.5rem; padding-bottom: 3rem; }
+footer p { margin: 0; font-size: .9rem; color: var(--muted); max-width: 42rem; }
+footer a:hover { color: var(--strong); }
+
+@media (max-width: 1080px) {
+  .docs { grid-template-columns: minmax(0, 1fr); }
+  .toc { display: none; }
+  .hero .wrap { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+  .big-mark { display: none; }
+}
+@media (max-width: 760px) {
+  .rail { position: sticky; top: 0; width: auto; height: auto; flex-direction: row; padding: .9rem 1rem; background: var(--bg); border-bottom: 1px solid var(--line); }
+  .rail .mark { width: 26px; height: 26px; }
+  .rail nav { display: none; }
+  .rail .foot { flex-direction: row; margin-left: auto; gap: 1.25rem; }
+  .rail .foot::before { display: none; }
+  .page { margin-left: 0; }
+  .wrap { padding: 0 1rem; }
+  .hero .wrap { padding-top: 3rem; padding-bottom: 3.5rem; }
+  .kicker-rule { margin-bottom: 2rem; }
+  .pair { grid-template-columns: minmax(0, 1fr); }
+  .pair > div + div { border-left: 0; border-top: 1px solid var(--line); }
+  .steps > li { grid-template-columns: minmax(0, 1fr); gap: .5rem; }
+  h2 { font-size: 1.75rem; }
+  section { padding-top: 3.5rem; }
+  .copy { min-width: 5rem; padding: 0 .9rem; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<aside class="rail">
+  <a href="#" aria-label="Collective Revived, top of page">
+    <svg class="mark" viewBox="-2 0 70 64" aria-hidden="true"><defs><clipPath id="cr-s-a"><polygon points="-20,-20 82.5,-20 -20,82.5"/></clipPath><clipPath id="cr-s-b"><polygon points="85.5,-20 90,-20 90,90 -20,90 -20,85.5"/></clipPath></defs><g transform="translate(6 0) skewX(-10)"><g clip-path="url(#cr-s-a)"><g fill="var(--red)" stroke="var(--red)" stroke-width="2.4" stroke-linejoin="round"><polygon points="31,12 31,21 18,21 13,26 13,38 18,43 31,43 31,52 14,52 4,42 4,22 14,12"/><polygon points="36,12 52,12 61,21 61,25 52,34 45,34 45,52 36,52"/><polygon points="45,37.5 54,37.5 63,52 54,52"/></g></g><g transform="translate(3 -1.5)"><g clip-path="url(#cr-s-b)"><g fill="var(--red)" stroke="var(--red)" stroke-width="2.4" stroke-linejoin="round"><polygon points="31,12 31,21 18,21 13,26 13,38 18,43 31,43 31,52 14,52 4,42 4,22 14,12"/><polygon points="36,12 52,12 61,21 61,25 52,34 45,34 45,52 36,52"/><polygon points="45,37.5 54,37.5 63,52 54,52"/></g></g></g></g></svg>
+  </a>
+  <nav aria-label="Sections">
+    <a href="#install">Install</a>
+    <a href="#forms">Forms</a>
+    <a href="#html">Html</a>
+    <a href="#support">Support</a>
+  </nav>
+  <div class="foot">
+    <button class="icon-btn theme-toggle" type="button" aria-label="Toggle light and dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg>
+    </button>
+    <a class="icon-btn" href="https://packagist.org/packages/prabowosd/laravel-collective-html" aria-label="Packagist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2.8 20 7.4v9.2l-8 4.6-8-4.6V7.4z"/><path d="m4 7.4 8 4.6 8-4.6M12 12v9.2"/></svg>
+    </a>
+    <a class="icon-btn" href="https://github.com/prabowosd/laravel-collective-html" aria-label="GitHub">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+    </a>
+  </div>
+</aside>
+
+<div class="page">
+  <header class="hero">
+    <pre class="hero-texture" aria-hidden="true"></pre>
+    <div class="wrap">
+      <div>
+        <p class="kicker label">Collective Revived / laravelcollective/html</p>
+        <hr class="kicker-rule">
+        <h1><span>Form::open().</span><span>Html::link().</span><span>On Laravel 13.</span></h1>
+        <p class="lede">The original package is abandoned and stops at Laravel 10. This one keeps the same <b>Collective\Html</b> namespace and the same output on <b>Laravel 6 to 13</b> and <b>PHP 8.0 to 8.5</b>. Install it on the version you run today and keep it through every upgrade.</p>
+        <div class="term">
+          <div class="term-head"><span class="dots"><i></i><i></i><i></i></span><span class="label">Terminal</span><button class="copy" type="button" data-copy="install-cmd">Copy</button></div>
+          <pre><span class="p">$</span> <span id="install-cmd">composer require prabowosd/laravel-collective-html</span></pre>
+        </div>
+        <ul class="facts">
+          <li>Drop-in for 6.x</li>
+          <li>Laravel 6 to 13</li>
+          <li>PHP 8.0 to 8.5</li>
+          <li>MIT</li>
+        </ul>
+      </div>
+      <svg class="big-mark" viewBox="-2 0 70 64" aria-hidden="true"><defs><clipPath id="cr-l-a"><polygon points="-20,-20 82.5,-20 -20,82.5"/></clipPath><clipPath id="cr-l-b"><polygon points="85.5,-20 90,-20 90,90 -20,90 -20,85.5"/></clipPath></defs><g transform="translate(6 0) skewX(-10)"><g clip-path="url(#cr-l-a)"><g fill="var(--red)" stroke="var(--red)" stroke-width="2.4" stroke-linejoin="round"><polygon points="31,12 31,21 18,21 13,26 13,38 18,43 31,43 31,52 14,52 4,42 4,22 14,12"/><polygon points="36,12 52,12 61,21 61,25 52,34 45,34 45,52 36,52"/><polygon points="45,37.5 54,37.5 63,52 54,52"/></g></g><g transform="translate(3 -1.5)"><g clip-path="url(#cr-l-b)"><g fill="var(--red)" stroke="var(--red)" stroke-width="2.4" stroke-linejoin="round"><polygon points="31,12 31,21 18,21 13,26 13,38 18,43 31,43 31,52 14,52 4,42 4,22 14,12"/><polygon points="36,12 52,12 61,21 61,25 52,34 45,34 45,52 36,52"/><polygon points="45,37.5 54,37.5 63,52 54,52"/></g></g></g></g></svg>
+    </div>
+  </header>
+
+  <div class="wrap docs">
+    <main>
+      <section id="install">
+        <span class="label">01 / Install</span>
+        <h2>Install</h2>
+        <div class="block"><div class="block-head"><span class="label">Shell</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></div>
+        <p>The service provider and the <code>Form</code> and <code>Html</code> facade aliases register through package discovery. Nothing to add to <code>config/app.php</code>.</p>
+        <p>The package declares <code>replace</code> for <code>laravelcollective/html</code> 6.x. If another dependency still asks for the original, Composer resolves it to this package instead of installing both, so the <code>Collective\Html</code> classes are only defined once.</p>
+      </section>
+
+      <section id="migrate">
+        <span class="label">02 / Migrate</span>
+        <h2>Coming from laravelcollective/html</h2>
+        <p>Namespace, class names, facades and helpers are the ones you already import.</p>
+        <ol class="steps">
+          <li><div><b>Remove the original package</b><span>It is abandoned and does not install on Laravel 11 or newer, so it blocks your next upgrade.</span>
+            <div class="block"><pre><code class="hl">composer remove laravelcollective/html</code></pre></div></div></li>
+          <li><div><b>Require this one</b><span>Same <code>Collective\Html</code> classes, same rendered HTML.</span>
+            <div class="block"><pre><code class="hl">composer require prabowosd/laravel-collective-html</code></pre></div></div></li>
+          <li><div><b>Clear compiled views</b><span>Blade directives such as <code>@form_text</code> live in cached views.</span>
+            <div class="block"><pre><code class="hl">php artisan view:clear</code></pre></div></div></li>
+        </ol>
+        <div class="note"><p>If you subclass <code>FormBuilder</code> or <code>HtmlBuilder</code>, check your overrides. Most methods now declare native return types such as <code>HtmlString</code>, and an override must declare a compatible one.</p></div>
+      </section>
+
+      <section id="forms">
+        <span class="label">03 / Forms</span>
+        <h2>Opening a form</h2>
+        <p><code>Form::open()</code> takes the target as <code>url</code>, <code>route</code> or <code>action</code>. Methods other than GET and POST are spoofed with a hidden <code>_method</code> field, and every non-GET form gets the CSRF token.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::open([
+    'url' => 'profile',
+    'method' => 'PUT',
+    'files' => true,
+]) !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;form method="POST"
+      action="https://example.com/profile"
+      accept-charset="UTF-8"
+      enctype="multipart/form-data"&gt;
+&lt;input name="_method" type="hidden" value="PUT"&gt;
+&lt;input name="_token" type="hidden" value="…"&gt;</code></pre></div>
+        </div>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::open(['route' => ['users.update', $user]]) !!}
+{!! Form::open(['action' => [UserController::class, 'store']]) !!}
+
+// Model binding: a field with no explicit value is filled from the model
+{!! Form::model($user, ['route' => ['users.update', $user], 'method' => 'PATCH']) !!}
+
+{!! Form::close() !!}</code></pre></div>
+      </section>
+
+      <section id="fields">
+        <span class="label">04 / Fields</span>
+        <h2>Fields</h2>
+        <p>Every field resolves its value in the same order: old input from the session, then the value you pass, then the bound model. A field gets an <code>id</code> when a <code>Form::label()</code> with the same name was rendered before it.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::text('username', 'sdp', [
+    'placeholder' => 'Username',
+]) !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;input placeholder="Username"
+       name="username" type="text"
+       value="sdp"&gt;</code></pre></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Signature</th></tr></thead>
+            <tbody>
+              <tr><td>text, email, tel, number, url, search, range, color, hidden</td><td><code>($name, $value = null, $options = [])</code></td></tr>
+              <tr><td>date, time, datetime, datetimeLocal, month, week</td><td>Same. A <code>DateTimeInterface</code> value is formatted for the input type.</td></tr>
+              <tr><td>password, file</td><td><code>($name, $options = [])</code>, never filled</td></tr>
+              <tr><td>textarea</td><td><code>($name, $value = null, $options = [])</code>. <code>'size' =&gt; '50x10'</code> sets cols and rows.</td></tr>
+              <tr><td>checkbox</td><td><code>($name, $value = 1, $checked = null, $options = [])</code></td></tr>
+              <tr><td>radio</td><td><code>($name, $value = null, $checked = null, $options = [])</code>, value defaults to the name</td></tr>
+              <tr><td>label</td><td><code>($name, $value = null, $options = [], $escape_html = true)</code></td></tr>
+              <tr><td>submit, button</td><td><code>($value = null, $options = [])</code></td></tr>
+              <tr><td>reset</td><td><code>($value, $attributes = [])</code></td></tr>
+              <tr><td>image</td><td><code>($url, $name = null, $attributes = [])</code></td></tr>
+              <tr><td>input</td><td><code>($type, $name, $value = null, $options = [])</code> for any other type</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Boolean attributes go in as values without keys: <code>['required', 'autofocus']</code> renders <code>required autofocus</code>.</p>
+      </section>
+
+      <section id="selects">
+        <span class="label">05 / Selects</span>
+        <h2>Selects</h2>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::select('size', [
+    'L' => 'Large',
+    'S' => 'Small',
+], 'S') !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;select name="size"&gt;
+  &lt;option value="L"&gt;Large&lt;/option&gt;
+  &lt;option value="S" selected="selected"&gt;Small&lt;/option&gt;
+&lt;/select&gt;</code></pre></div>
+        </div>
+        <p>Nested arrays become <code>&lt;optgroup&gt;</code>s. Pass an array as the selected value for a <code>multiple</code> select, and a <code>placeholder</code> attribute for an empty first option.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::selectRange('qty', 1, 10) !!}
+{!! Form::selectYear('year', 2020, 2030) !!}
+{!! Form::selectMonth('month') !!}   // month names in the app locale</code></pre></div>
+
+        <h3>From an enum</h3>
+        <p>Backed enums use their value, pure enums the case name. A <code>label()</code> method on the enum supplies the option text, otherwise the case name is written as a headline.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::enumSelect(
+    'status',
+    OrderStatus::class,
+    'shipped',
+) !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;select name="status"&gt;
+  &lt;option value="pending"&gt;Pending&lt;/option&gt;
+  &lt;option value="shipped" selected="selected"&gt;Shipped&lt;/option&gt;
+&lt;/select&gt;</code></pre></div>
+        </div>
+
+        <h3>From Eloquent</h3>
+        <p>The source can be a model class, a query or relation, a collection, or a plain array of rows.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">{!! Form::modelSelect('category_id', Category::class, 'name', 'id', $selected) !!}
+{!! Form::modelSelect('owner_id', $team->members(), 'full_name') !!}</code></pre></div>
+      </section>
+
+      <section id="validation">
+        <span class="label">06 / Validation</span>
+        <h2>Validation helpers</h2>
+        <p>These read the <code>$errors</code> bag Laravel shares with every view. Array names map to dot keys, so <code>person[name]</code> checks <code>person.name</code>. Classic calls are untouched: the invalid class is added only where you ask for it.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Form::text('email', null,
+    Form::withValidationClass('email', [
+        'class' => 'form-control',
+    ])
+) !!}
+{!! Form::error('email') !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output, with an error</span></div>
+<pre><code class="hl">&lt;input class="form-control is-invalid"
+       name="email" type="text"&gt;
+&lt;div class="invalid-feedback"&gt;
+  The email field is required.
+&lt;/div&gt;</code></pre></div>
+        </div>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">@if (Form::hasError('email')) ... @endif
+{{ Form::getError('email') }}   // first message, or null</code></pre></div>
+        <p><code>Form::error()</code> returns an empty string when the field is valid, so it is safe after every control.</p>
+      </section>
+
+      <section id="components">
+        <span class="label">07 / Components</span>
+        <h2>Blade components</h2>
+        <p>Label, control and error feedback in one tag. Attributes that are not props, such as <code>placeholder</code>, <code>class</code> or <code>data-*</code>, land on the control.</p>
+        <div class="block"><div class="block-head"><span class="label">Blade</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">&lt;x-form-input name="email" label="Email" type="email" placeholder="you@example.com" /&gt;
+&lt;x-form-input name="bio" label="Bio" type="textarea" rows="4" /&gt;
+
+&lt;x-form-select name="role" label="Role" :options="['admin' =&gt; 'Admin', 'member' =&gt; 'Member']" selected="member" /&gt;
+&lt;x-form-select name="status" label="Status" :enum="App\Enums\OrderStatus::class" /&gt;
+&lt;x-form-select name="category_id" label="Category" :model="App\Models\Category::class" label-column="name" /&gt;
+
+&lt;x-form-checkbox name="agree" label="I accept the terms" :checked="true" /&gt;</code></pre></div>
+      </section>
+
+      <section id="html">
+        <span class="label">08 / Html</span>
+        <h2>Html builder</h2>
+        <p>Assets, links and small markup helpers. URLs go through Laravel's URL generator.</p>
+        <div class="block pair">
+          <div><div class="block-head"><span class="label">Blade</span></div>
+<pre><code class="hl">{!! Html::link('docs', 'Read the docs', [
+    'class' => 'btn',
+]) !!}</code></pre></div>
+          <div><div class="block-head"><span class="label">Output</span></div>
+<pre><code class="hl">&lt;a href="https://example.com/docs"
+   class="btn"&gt;Read the docs&lt;/a&gt;</code></pre></div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Output</th></tr></thead>
+            <tbody>
+              <tr><td>script, style, favicon, image</td><td><code>&lt;script&gt;</code>, <code>&lt;link&gt;</code> and <code>&lt;img&gt;</code> tags for an asset path</td></tr>
+              <tr><td>link, secureLink, linkAsset, linkRoute, linkAction</td><td>Anchors to a URL, asset, named route or controller action</td></tr>
+              <tr><td>mailto, email, obfuscate</td><td>Addresses written as mixed HTML entities</td></tr>
+              <tr><td>ul, ol, dl</td><td>Lists from arrays</td></tr>
+              <tr><td>meta, tag</td><td>Any element with attributes</td></tr>
+              <tr><td>entities, decode, nbsp</td><td>Escaping helpers</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>The global helpers <code>link_to()</code>, <code>link_to_asset()</code>, <code>link_to_route()</code> and <code>link_to_action()</code> are still there, each behind a <code>function_exists</code> check.</p>
+      </section>
+
+      <section id="config">
+        <span class="label">09 / Config</span>
+        <h2>Classes are configuration</h2>
+        <p>The validation helpers and components use Bootstrap class names by default. Publish the config to map them to Tailwind or anything else.</p>
+        <div class="block"><div class="block-head"><span class="label">Shell</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">php artisan vendor:publish --tag=html-config</code></pre></div>
+        <div class="block"><div class="block-head"><span class="label">config/html.php</span><button class="copy" type="button">Copy</button></div>
+<pre><code class="hl">'classes' => [
+    'control' => 'form-control',
+    'select' => 'form-select',
+    'label' => 'form-label',
+    'invalid' => 'is-invalid',
+    'feedback' => 'invalid-feedback',
+    'check_wrapper' => 'form-check',
+    'check_input' => 'form-check-input',
+    'check_label' => 'form-check-label',
+],</code></pre></div>
+      </section>
+
+      <section id="support">
+        <span class="label">10 / Support</span>
+        <h2>Support matrix</h2>
+        <p>Every supported pair runs the full test suite in CI. From PHP 8.2 up, the suite also fails on any deprecation the package raises.</p>
+        <div class="table-wrap">
+          <table class="matrix">
+            <thead><tr><th>PHP</th><th>L6</th><th>L7</th><th>L8</th><th>L9</th><th>L10</th><th>L11</th><th>L12</th><th>L13</th></tr></thead>
+            <tbody>
+              <tr><td>8.0</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td></tr>
+              <tr><td>8.1</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td></tr>
+              <tr><td>8.2</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="na">n/a</td></tr>
+              <tr><td>8.3</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.4</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+              <tr><td>8.5</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="na">n/a</td><td class="ok">tested</td><td class="ok">tested</td><td class="ok">tested</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>n/a marks a pair that Laravel itself does not support. Two features need more than the floor: the <code>&lt;x-form-*&gt;</code> components need Laravel 7, because class based Blade components arrived there, and <code>Form::enumSelect()</code> needs PHP 8.1, which introduced enums.</p>
+      </section>
+    </main>
+
+    <aside class="toc" aria-label="On this page">
+      <span class="label">On this page</span>
+      <ol>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#migrate">Migrate</a></li>
+        <li><a href="#forms">Opening a form</a></li>
+        <li><a href="#fields">Fields</a></li>
+        <li><a href="#selects">Selects</a></li>
+        <li><a href="#validation">Validation helpers</a></li>
+        <li><a href="#components">Blade components</a></li>
+        <li><a href="#html">Html builder</a></li>
+        <li><a href="#config">Configuration</a></li>
+        <li><a href="#support">Support matrix</a></li>
+      </ol>
+      <div class="cta">
+        <p>Found a form that renders differently?</p>
+        <a class="btn" href="https://github.com/prabowosd/laravel-collective-html/pulls">Open a pull request</a>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="wrap">
+      <p>Collective Revived keeps the <code>laravelcollective/html</code> API working on current Laravel. The original builders are the work of the Laravel Collective and its contributors.</p>
+      <p>Maintained by <a href="https://sdp.im">Satrio Dwi Prabowo</a>. MIT license.</p>
+    </div>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (e) {}
+  document.querySelector('.theme-toggle').addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+  });
+
+  // Faint hero backdrop, built from the same calls the docs describe.
+  const lines = [
+    "{!! Form::open(['route' => ['users.update', $user], 'method' => 'PUT']) !!}   {!! Form::label('email', 'E-Mail Address') !!}   {!! Form::email('email') !!}",
+    "Html::link('docs', 'Read the docs')   {!! Form::select('size', ['L' => 'Large', 'S' => 'Small'], 'S') !!}   {!! Form::token() !!}   {!! Form::close() !!}",
+    "{!! Form::enumSelect('status', OrderStatus::class) !!}   {!! Form::error('email') !!}   Form::withValidationClass('email', ['class' => 'form-control'])",
+    "{!! Form::model($user, ['url' => 'profile']) !!}   {!! Form::checkbox('agree', 1, true) !!}   {!! Form::textarea('bio', null, ['size' => '50x10']) !!}",
+    "Html::script('js/app.js')   Html::style('css/app.css')   {!! Form::selectRange('qty', 1, 10) !!}   {!! Form::modelSelect('category_id', Category::class) !!}",
+    "<x-form-input name=\"email\" label=\"Email\" type=\"email\" />   <x-form-select name=\"role\" :options=\"$roles\" />   <x-form-checkbox name=\"agree\" />",
+  ];
+  document.querySelector('.hero-texture').textContent = Array.from({ length: 48 }, (_, i) => lines[i % lines.length] + '   ' + lines[(i + 3) % lines.length]).join('\n');
+
+  // Small highlighter for the Blade, PHP and HTML samples on this page.
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const rule = /(\/\/[^\n]*)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\$\w+)|(\b(?:Form|Html)::\w+|\b\w+(?=\())|(\{!!|!!\}|\{\{|\}\}|@\w+|\b(?:composer|php|null|true)\b|<\/?[\w-]+|\/?>)/g;
+  document.querySelectorAll('code.hl').forEach(el => {
+    const src = el.textContent;
+    let out = '', last = 0;
+    src.replace(rule, (m, c, s, v, f, k, i) => {
+      out += esc(src.slice(last, i));
+      const cls = c ? 'tok-c' : s ? 'tok-s' : v ? 'tok-v' : f ? 'tok-f' : /^[<\/]/.test(m) ? 'tok-t' : 'tok-k';
+      out += `<span class="${cls}">${esc(m)}</span>`;
+      last = i + m.length;
+    });
+    el.innerHTML = out + esc(src.slice(last));
+  });
+
+  document.querySelectorAll('.copy').forEach(btn => btn.addEventListener('click', async () => {
+    const target = btn.dataset.copy ? document.getElementById(btn.dataset.copy) : btn.closest('.block').querySelector('pre');
+    try { await navigator.clipboard.writeText(target.textContent); btn.textContent = 'Copied'; }
+    catch (e) { btn.textContent = 'Failed'; }
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+  }));
+
+  // Rail groups several sections under one entry.
+  const group = { install: 'install', migrate: 'install', forms: 'forms', fields: 'forms', selects: 'forms', validation: 'forms', components: 'forms', html: 'html', config: 'html', support: 'support' };
+  const toc = [...document.querySelectorAll('.toc a')], rail = [...document.querySelectorAll('.rail nav a')];
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    toc.forEach(a => a.classList.toggle('active', a.hash === '#' + e.target.id));
+    rail.forEach(a => a.classList.toggle('active', a.hash === '#' + group[e.target.id]));
+  }), { rootMargin: '-25% 0px -65% 0px' });
+  document.querySelectorAll('main section').forEach(s => io.observe(s));
+})();
+</script>
+</body>
+</html>
