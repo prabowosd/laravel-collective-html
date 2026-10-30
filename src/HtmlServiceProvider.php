@@ -8,6 +8,7 @@ use Collective\Html\Components\FormSelect;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\View\Compilers\BladeCompiler;
+use Illuminate\View\Component;
 
 class HtmlServiceProvider extends ServiceProvider
 {
@@ -99,10 +100,22 @@ class HtmlServiceProvider extends ServiceProvider
      */
     protected function registerBladeComponents(): void
     {
-        $this->callAfterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+        // Class based Blade components arrived in Laravel 7.
+        if (! class_exists(Component::class)) {
+            return;
+        }
+
+        $register = function (BladeCompiler $bladeCompiler) {
             $bladeCompiler->component(FormInput::class, 'form-input');
             $bladeCompiler->component(FormSelect::class, 'form-select');
             $bladeCompiler->component(FormCheckbox::class, 'form-checkbox');
-        });
+        };
+
+        // Same as callAfterResolving(), which Laravel 6 and 7 do not have.
+        if ($this->app->resolved('blade.compiler')) {
+            $register($this->app->make('blade.compiler'));
+        } else {
+            $this->app->afterResolving('blade.compiler', $register);
+        }
     }
 }

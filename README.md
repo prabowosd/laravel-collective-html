@@ -4,7 +4,7 @@
 [![Total Downloads](https://poser.pugx.org/prabowosd/laravel-collective-html/downloads)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 [![License](https://poser.pugx.org/prabowosd/laravel-collective-html/license)](https://packagist.org/packages/prabowosd/laravel-collective-html)
 
-HTML and Form Builders for the Laravel Framework, maintained for **Laravel 10, 11, 12, and 13** and **PHP 8.2+ (including PHP 8.5)**.
+HTML and Form Builders for the Laravel Framework, maintained for **Laravel 6 to 13** and **PHP 8.0 to 8.5**.
 
 The `Collective\Html` namespace is retained so the package stays a drop-in replacement for projects already using the classic HTML/Form builders.
 
