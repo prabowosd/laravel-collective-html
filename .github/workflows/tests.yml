@@ -47,7 +47,11 @@ jobs:
           coverage: none
 
       - name: Install dependencies
+        env:
+          # Laravel 6 to 9 pin Symfony releases that carry advisories; tests still need them.
+          COMPOSER_NO_SECURITY_BLOCKING: 1
         run: |
+          composer config audit.block-insecure false
           composer require --no-update --no-interaction \
             "illuminate/http:^${{ matrix.laravel }}.0" \
             "illuminate/routing:^${{ matrix.laravel }}.0" \
