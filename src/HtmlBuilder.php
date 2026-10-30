@@ -421,8 +421,14 @@ class HtmlBuilder
     public function obfuscate($value): string
     {
         $safe = '';
+        $value = (string) $value;
 
-        foreach (str_split((string) $value) as $letter) {
+        // Before PHP 8.2, str_split('') returns [''] and would emit "&#0;".
+        if ($value === '') {
+            return $safe;
+        }
+
+        foreach (str_split($value) as $letter) {
             if (ord($letter) > 128) {
                 return $letter;
             }

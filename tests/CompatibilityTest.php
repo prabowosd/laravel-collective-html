@@ -60,7 +60,11 @@ class CompatibilityTest extends TestCase
 
         $this->assertSame('', $htmlBuilder->entities(null));
         $this->assertSame('', $htmlBuilder->decode(null));
-        $this->assertSame('', $htmlBuilder->obfuscate(null));
+        // obfuscate() is random per letter, so repeat to catch a stray "&#0;" on PHP < 8.2.
+        for ($i = 0; $i < 20; $i++) {
+            $this->assertSame('', $htmlBuilder->obfuscate(null));
+            $this->assertSame('', $htmlBuilder->obfuscate(''));
+        }
         $this->assertSame('<label for=""></label>', $formBuilder->label(null)->toHtml());
     }
 }
