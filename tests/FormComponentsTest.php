@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\MessageBag;
+use Illuminate\View\Component;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
@@ -21,6 +22,10 @@ class FormComponentsTest extends TestCase
 
     protected function setUp(): void
     {
+        if (! class_exists(Component::class)) {
+            $this->markTestSkipped('Class based Blade components need Laravel 7.');
+        }
+
         $url = new UrlGenerator(new RouteCollection, Request::create('/foo', 'GET'));
         $this->viewFactory = m::mock(Factory::class);
         $html = new HtmlBuilder($this->viewFactory, $url);

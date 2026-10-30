@@ -671,10 +671,21 @@ class FormBuilder
         foreach ($enum::cases() as $case) {
             $value = $case instanceof \BackedEnum ? $case->value : $case->name;
 
-            $list[$value] = method_exists($case, 'label') ? $case->label() : Str::headline($case->name);
+            $list[$value] = method_exists($case, 'label') ? $case->label() : $this->headline($case->name);
         }
 
         return $list;
+    }
+
+    /**
+     * Turn a case name such as "OnHold" into "On Hold".
+     */
+    protected function headline(string $name): string
+    {
+        // Str::headline() only exists from Laravel 8.
+        return method_exists(Str::class, 'headline')
+            ? Str::headline($name)
+            : ucwords(str_replace('_', ' ', Str::snake($name)));
     }
 
     /**

@@ -10,32 +10,17 @@ use Illuminate\Support\Collection;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 
-enum SourceSelectStatus: string
-{
-    case Active = 'active';
-    case Inactive = 'inactive';
-}
-
-enum SourceSelectRole: int
-{
-    case Admin = 1;
-    case Member = 2;
-
-    public function label(): string
-    {
-        return match ($this) {
-            self::Admin => 'Administrator',
-            self::Member => 'Team Member',
-        };
-    }
-}
-
 class FormSourceSelectTest extends TestCase
 {
     protected $formBuilder;
 
     protected function setUp(): void
     {
+        // Enums are a parse error before PHP 8.1, so they live in their own file.
+        if (PHP_VERSION_ID >= 80100) {
+            require_once __DIR__.'/Fixtures/SourceSelectEnums.php';
+        }
+
         $urlGenerator = new UrlGenerator(new RouteCollection, Request::create('/foo', 'GET'));
         $viewFactory = m::mock(Factory::class);
         $htmlBuilder = new HtmlBuilder($viewFactory, $urlGenerator);
@@ -49,6 +34,8 @@ class FormSourceSelectTest extends TestCase
 
     public function test_enum_select_humanizes_case_names_by_default()
     {
+        $this->requiresEnums();
+
         $select = (string) $this->formBuilder->enumSelect('status', SourceSelectStatus::class, 'inactive');
 
         $this->assertStringContainsString('<select name="status">', $select);
@@ -58,6 +45,8 @@ class FormSourceSelectTest extends TestCase
 
     public function test_enum_select_uses_label_method_when_present()
     {
+        $this->requiresEnums();
+
         $select = (string) $this->formBuilder->enumSelect('role', SourceSelectRole::class, 1);
 
         $this->assertStringContainsString('<option value="1" selected="selected">Administrator</option>', $select);
@@ -88,5 +77,27 @@ class FormSourceSelectTest extends TestCase
 
         $this->assertStringContainsString('<option value="1">One</option>', $select);
         $this->assertStringContainsString('<option value="2">Two</option>', $select);
+    }
+
+    public function test_case_names_become_headlines_on_every_laravel_version()
+    {
+        $form = new class(m::mock(HtmlBuilder::class), m::mock(UrlGenerator::class), m::mock(Factory::class), 'abc') extends FormBuilder
+        {
+            public function headlineFor(string $name): string
+            {
+                return $this->headline($name);
+            }
+        };
+
+        $this->assertSame('On Hold', $form->headlineFor('OnHold'));
+        $this->assertSame('Active', $form->headlineFor('Active'));
+        $this->assertSame('Partly Shipped', $form->headlineFor('partly_shipped'));
+    }
+
+    protected function requiresEnums(): void
+    {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('Enums need PHP 8.1.');
+        }
     }
 }
