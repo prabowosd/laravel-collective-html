@@ -84,6 +84,13 @@ class FormBuilder
     protected $type = null;
 
     /**
+     * Old input arrays being consumed one element per repeated field, keyed by name.
+     *
+     * @var array<string, Collection>
+     */
+    protected $payload = [];
+
+    /**
      * Create a new form builder instance.
      *
      * @param  string  $csrfToken
@@ -117,7 +124,7 @@ class FormBuilder
         // different method than it actually is, for convenience from the forms.
         $append = $this->getAppendage($method);
 
-        if (isset($options['files']) && $options['files']) {
+        if (! empty($options['files'])) {
             $options['enctype'] = 'multipart/form-data';
         }
 
@@ -227,7 +234,7 @@ class FormBuilder
      */
     protected function formatLabel($name, $value)
     {
-        return $value ?: ucwords(str_replace('_', ' ', $name));
+        return $value ?: ucwords(str_replace('_', ' ', (string) $name));
     }
 
     /**
@@ -614,7 +621,7 @@ class FormBuilder
      */
     public function selectYear(): HtmlString
     {
-        return call_user_func_array([$this, 'selectRange'], func_get_args());
+        return $this->selectRange(...func_get_args());
     }
 
     /**
@@ -864,16 +871,11 @@ class FormBuilder
      */
     protected function getCheckedState($type, $name, $value, $checked)
     {
-        switch ($type) {
-            case 'checkbox':
-                return $this->getCheckboxCheckedState($name, $value, $checked);
-
-            case 'radio':
-                return $this->getRadioCheckedState($name, $value, $checked);
-
-            default:
-                return $this->compareValues($name, $value);
-        }
+        return match ($type) {
+            'checkbox' => $this->getCheckboxCheckedState($name, $value, $checked),
+            'radio' => $this->getRadioCheckedState($name, $value, $checked),
+            default => $this->compareValues($name, $value),
+        };
     }
 
     /**
@@ -1343,9 +1345,7 @@ class FormBuilder
      */
     protected function errors()
     {
-        $errors = $this->view->shared('errors');
-
-        return is_null($errors) ? null : $errors;
+        return $this->view->shared('errors');
     }
 
     /**
@@ -1426,7 +1426,7 @@ class FormBuilder
      */
     protected function transformKey($key): string
     {
-        return str_replace(['.', '[]', '[', ']'], ['_', '', '.', ''], $key);
+        return str_replace(['.', '[]', '[', ']'], ['_', '', '.', ''], (string) $key);
     }
 
     /**

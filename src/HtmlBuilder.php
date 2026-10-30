@@ -31,7 +31,7 @@ class HtmlBuilder
      */
     public function entities($value): string
     {
-        return htmlentities($value, ENT_QUOTES, 'UTF-8', false);
+        return htmlentities((string) $value, ENT_QUOTES, 'UTF-8', false);
     }
 
     /**
@@ -41,7 +41,7 @@ class HtmlBuilder
      */
     public function decode($value): string
     {
-        return html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+        return html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
     }
 
     /**
@@ -422,7 +422,7 @@ class HtmlBuilder
     {
         $safe = '';
 
-        foreach (str_split($value) as $letter) {
+        foreach (str_split((string) $value) as $letter) {
             if (ord($letter) > 128) {
                 return $letter;
             }
@@ -430,18 +430,11 @@ class HtmlBuilder
             // To properly obfuscate the value, we will randomly convert each letter to
             // its entity or hexadecimal representation, keeping a bot from sniffing
             // the randomly obfuscated letters out of the string on the responses.
-            switch (rand(1, 3)) {
-                case 1:
-                    $safe .= '&#'.ord($letter).';';
-                    break;
-
-                case 2:
-                    $safe .= '&#x'.dechex(ord($letter)).';';
-                    break;
-
-                case 3:
-                    $safe .= $letter;
-            }
+            $safe .= match (random_int(1, 3)) {
+                1 => '&#'.ord($letter).';',
+                2 => '&#x'.dechex(ord($letter)).';',
+                3 => $letter,
+            };
         }
 
         return $safe;
