@@ -3,7 +3,7 @@
   "description": "HTML and Form Builders for the Laravel Framework (Laravel 6-13 compatible).",
   "type": "library",
   "license": "MIT",
-  "homepage": "https://github.com/prabowosd/laravel-collective-html",
+  "homepage": "https://collective.sdp.im",
   "support": {
     "issues": "https://github.com/prabowosd/laravel-collective-html/issues",
     "source": "https://github.com/prabowosd/laravel-collective-html"
@@ -41,7 +41,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-main": "1.1.x-dev"
+      "dev-main": "1.2.x-dev"
     },
     "laravel": {
       "providers": [
